@@ -1,0 +1,5 @@
+dependencies {
+    compile 'io.pivotal.android:push:0.6-SNAPSHOT'
+    compile 'com.android.support:appcompat-v7:19.+'
+//    compile 'io.pivotal.android:SampleAppCore:0.6-RELEASE'
+}

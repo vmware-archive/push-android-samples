@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".BasePreferencesActivity" >
+
+    <item android:id="@+id/action_reset_preferences"
+          android:icon="@drawable/ic_menu_delete"
+          android:title="@string/action_reset_preferences"
+          app:showAsAction="always|withText" />
+
+</menu>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Push Sample</string>
+    <string name="action_register">Register</string>
+    <string name="action_clear_registration">Clear Registration</string>
+    <string name="action_send_message">Send Message</string>
+    <string name="action_unregister">Unregister</string>
+    <string name="action_clear_events">Clear Unsent Events</string>
+    <string name="title_activity_preferences">Preferences</string>
+    <string name="pref_title_gcm_registration_preferences">GCM Registration Preferences</string>
+    <string name="pref_title_gcm_sender_id">GCM Sender ID</string>
+    <string name="pref_title_backend_registration_preferences">Pivotal MSS Registration Preferences</string>
+    <string name="pref_title_variant_uuid">Variant UUID</string>
+    <string name="pref_title_variant_secret">Variant Secret</string>
+    <string name="pref_title_device_alias">Device Alias</string>
+    <string name="pref_title_registration_preferences">Registration Preferences</string>
+    <string name="pref_title_gcm_push_preferences">GCM Push Preferences</string>
+    <string name="pref_title_gcm_browser_api_key">GCM Browser API Key</string>
+    <string name="pref_title_back_end_push_preferences">Pivotal MSS Push Preferences</string>
+    <string name="pref_title_back_end_environment_uuid">Environment UUID</string>
+    <string name="pref_title_back_end_environment_key">Environment Key</string>
+    <string name="pref_title_push_base_server_url">Push Base Server URL</string>
+    <string name="pref_title_is_analytics_enabled">Is Analytics Enabled?</string>
+    <string name="pref_title_analytics_base_server_url">Analytics Base Server URL</string>
+    <string name="pref_title_back_end_analytics_preferences">Pivotal MSS Analytics Preferences</string>
+    <string name="action_reset_preferences">Reset to Defaults</string>
+    <string name="action_edit_preferences">Edit Preferences</string>
+
+</resources>

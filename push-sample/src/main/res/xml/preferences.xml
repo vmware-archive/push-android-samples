@@ -1,0 +1,102 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/pref_title_gcm_registration_preferences">
+
+        <EditTextPreference
+            android:key="test_gcm_sender_id"
+            android:title="@string/pref_title_gcm_sender_id"
+            android:defaultValue="@string/pref_default_gcm_sender_id"
+            android:persistent="true"
+            android:selectAllOnFocus="true"
+            android:inputType="text"
+            android:singleLine="true"
+            android:maxLines="1"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_title_backend_registration_preferences">
+
+        <EditTextPreference
+            android:key="test_variant_uuid"
+            android:title="@string/pref_title_variant_uuid"
+            android:defaultValue="@string/pref_default_variant_uuid"
+            android:persistent="true"
+            android:selectAllOnFocus="true"
+            android:inputType="text"
+            android:singleLine="true"
+            android:maxLines="1"/>
+
+        <EditTextPreference
+            android:key="test_variant_secret"
+            android:title="@string/pref_title_variant_secret"
+            android:defaultValue="@string/pref_default_variant_secret"
+            android:persistent="true"
+            android:selectAllOnFocus="true"
+            android:inputType="text"
+            android:singleLine="true"
+            android:maxLines="1"/>
+
+        <EditTextPreference
+            android:key="test_device_alias"
+            android:title="@string/pref_title_device_alias"
+            android:defaultValue="@string/pref_default_device_alias"
+            android:persistent="true"
+            android:selectAllOnFocus="true"
+            android:inputType="text"
+            android:singleLine="true"
+            android:maxLines="1"/>
+
+        <EditTextPreference
+            android:key="test_push_base_server_url"
+            android:title="@string/pref_title_push_base_server_url"
+            android:defaultValue="@string/pref_default_push_base_server_url"
+            android:persistent="true"
+            android:selectAllOnFocus="true"
+            android:inputType="text"
+            android:singleLine="true"
+            android:maxLines="1"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_title_gcm_push_preferences">
+
+        <EditTextPreference
+            android:key="test_gcm_browser_api_key"
+            android:title="@string/pref_title_gcm_browser_api_key"
+            android:defaultValue="@string/pref_default_gcm_browser_api_key"
+            android:persistent="true"
+            android:selectAllOnFocus="true"
+            android:inputType="text"
+            android:singleLine="true"
+            android:maxLines="1"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_title_back_end_push_preferences">
+
+        <EditTextPreference
+            android:key="test_back_end_environment_uuid"
+            android:title="@string/pref_title_back_end_environment_uuid"
+            android:defaultValue="@string/pref_default_back_end_environment_uuid"
+            android:persistent="true"
+            android:selectAllOnFocus="true"
+            android:inputType="text"
+            android:singleLine="true"
+            android:maxLines="1"/>
+
+        <EditTextPreference
+            android:key="test_back_end_environment_key"
+            android:title="@string/pref_title_back_end_environment_key"
+            android:defaultValue="@string/pref_default_back_end_environment_key"
+            android:persistent="true"
+            android:selectAllOnFocus="true"
+            android:inputType="text"
+            android:singleLine="true"
+            android:maxLines="1"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,29 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context=".MainActivity">
+
+    <item
+        android:id="@+id/action_register"
+        android:icon="@drawable/ic_menu_send"
+        android:title="@string/action_register"
+        app:showAsAction="always|withText"/>
+
+    <item
+        android:id="@+id/action_send_message"
+        android:title="@string/action_send_message"
+        app:showAsAction="withText"/>
+
+    <item
+        android:id="@+id/action_unregister"
+        android:icon="@drawable/ic_menu_stop"
+        android:title="@string/action_unregister"
+        app:showAsAction="withText"/>
+
+    <item
+        android:id="@+id/action_clear_registration"
+        android:icon="@drawable/ic_menu_delete"
+        android:title="@string/action_clear_registration"
+        app:showAsAction="withText"/>
+
+</menu>
