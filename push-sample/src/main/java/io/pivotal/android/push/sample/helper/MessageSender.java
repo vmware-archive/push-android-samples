@@ -135,9 +135,8 @@ public class MessageSender {
         }
         final String[] devices = new String[]{device_uuid};
         final String platforms = "android";
-        final String messageTitle = "Sample Message Title";
         final String messageBody = "This message was sent to the back-end at " + logger.getLogTimestamp() + "." ;
-        final BackEndMessageRequest messageRequest = new BackEndMessageRequest(messageTitle, messageBody, platforms, devices);
+        final BackEndMessageRequest messageRequest = new BackEndMessageRequest(messageBody, platforms, devices);
         final Gson gson = new Gson();
         return gson.toJson(messageRequest);
     }
