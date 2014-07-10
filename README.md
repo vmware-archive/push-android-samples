@@ -1,8 +1,13 @@
 Pivotal Mobile Services Suite Push SDK Samples for Android
 ==========================================================
 
+Push SDK Usage
+--------------
+For more information please visit the [docs site](https://github.com/cfmobile/docs-pushnotifications-android)
+
+
 Push Demo Application
-----------------------------
+---------------------
 
 The Push Demo Application is an example of the simplest application possible that uses the Pivotal Mobile Services Suite
 Push Client SDK.  At this time, it only demonstrates how to register for push notifications.
