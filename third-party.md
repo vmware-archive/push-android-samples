@@ -1,6 +1,4 @@
 Dependencies
 ============
 
-Apache License 2.0
-------------------
-- com.android.support:appcompat-v7:19.+
+None other than the Android SDK and supporting libraries.
