@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import java.util.Set;
+
 import io.pivotal.android.push.Push;
 import io.pivotal.android.push.RegistrationParameters;
 import io.pivotal.android.push.prefs.PushPreferencesProviderImpl;
@@ -135,8 +137,9 @@ public class MainActivity extends LoggingActivity {
         final String variantSecret = Preferences.getVariantSecret(this);
         final String deviceAlias = Preferences.getDeviceAlias(this);
         final String baseServerUrl = Preferences.getPushBaseServerUrl(this);
+        final Set<String> tags = null; // TODO - put in some tags
         addLogMessage("GCM Sender ID: '" + gcmSenderId + "'\nVariant UUID: '" + variantUuid + "\nVariant Secret: '" + variantSecret + "'\nDevice Alias: '" + deviceAlias + "'\nBase Server URL: '" + baseServerUrl + "'.");
-        return new RegistrationParameters(gcmSenderId, variantUuid, variantSecret, deviceAlias, baseServerUrl);
+        return new RegistrationParameters(gcmSenderId, variantUuid, variantSecret, deviceAlias, baseServerUrl, tags);
     }
 
     private void clearRegistration() {

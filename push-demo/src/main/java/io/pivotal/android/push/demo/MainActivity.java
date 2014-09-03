@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.TextView;
 
+import java.util.Set;
+
 import io.pivotal.android.push.Push;
 import io.pivotal.android.push.RegistrationParameters;
 import io.pivotal.android.push.registration.RegistrationListener;
@@ -14,19 +16,22 @@ import io.pivotal.android.push.registration.RegistrationListener;
 public class MainActivity extends ActionBarActivity {
 
     // Set to your "Project Number" on your Google Cloud project
-    private static final String GCM_SENDER_ID = "961895792376";
+    private static final String GCM_SENDER_ID = "420180631899";
 
     // Set to your "Variant UUID", as provided by the Pivotal Mobile Services Suite console
-    private static final String VARIANT_UUID = "8e00641c-b264-4ae9-98db-dd6f2ca858b2";
+    private static final String VARIANT_UUID = "152e347a-44ef-4aee-ba20-49da16877fc8";
 
     // Set to your "Variant Secret" as provided by the Pivotal Mobile Services Suite console
-    private static final String VARIANT_SECRET = "0de0f14a-ab2c-4f47-aa44-a6cb06531c6c";
+    private static final String VARIANT_SECRET = "05254dc4-7a44-4069-8033-37784e4be8fc";
 
     // Set to your instance of the Pivotal Mobile Services Suite server providing your push services.
-    private static final String PUSH_BASE_SERVER_URL = "http://ec2-54-87-125-154.compute-1.amazonaws.com";
+    private static final String PUSH_BASE_SERVER_URL = "http://cfms-push-service-dev.main.vchs.cfms-apps.com";
 
     // Set to your own defined alias for this device.  May not be null.  May be empty.
     private static final String DEVICE_ALIAS = "push-demo-alias";
+
+    // Set to the list of tags you'd like to subscribe to.  May be empty or null.
+    private static final Set<String> TAGS = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,7 @@ public class MainActivity extends ActionBarActivity {
         queueLogMessage("VARIANT_SECRET: " + VARIANT_SECRET);
         queueLogMessage("DEVICE_ALIAS: " + DEVICE_ALIAS);
         queueLogMessage("PUSH_BASE_SERVER_URL: " + PUSH_BASE_SERVER_URL);
+        queueLogMessage("TAGS: " + TAGS);
 
         queueLogMessage("Registering for notifications...");
 
@@ -53,7 +59,7 @@ public class MainActivity extends ActionBarActivity {
 
     private void registerForPushNotifications() {
         final RegistrationParameters parameters = new RegistrationParameters(
-            GCM_SENDER_ID, VARIANT_UUID, VARIANT_SECRET, DEVICE_ALIAS, PUSH_BASE_SERVER_URL
+            GCM_SENDER_ID, VARIANT_UUID, VARIANT_SECRET, DEVICE_ALIAS, PUSH_BASE_SERVER_URL, TAGS
         );
 
         Push.getInstance(this).startRegistration(parameters, new RegistrationListener() {

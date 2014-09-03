@@ -11,13 +11,13 @@
     <!-- Cloud Console.  You will also need to enter this value in your "variant" in the Pivotal Mobile Services Suite -->
     <!-- Push Server admin console.                                                                                  -->
 
-    <string name="pref_default_gcm_sender_id">641043317726</string>
-    <string name="pref_default_variant_uuid">a183a4ab-83b1-45ef-ba92-3727454dbc4b</string>
-    <string name="pref_default_variant_secret">5c9b1b8a-b2fe-4c66-a01b-37797af485fd</string>
-    <string name="pref_default_push_base_server_url">http://push-notifications.sherry.wine.cf-app.com</string>
+    <string name="pref_default_gcm_sender_id">816486687340</string>
+    <string name="pref_default_variant_uuid">0b6e219c-9283-43e3-8b7b-dd83214ebfc8</string>
+    <string name="pref_default_variant_secret">3aa82a02-e8b8-4164-9f16-cc5da087b823</string>
+    <string name="pref_default_push_base_server_url">http://cfms-push-service-dev.main.vchs.cfms-apps.com</string>
 
-    <string name="pref_default_back_end_environment_uuid">db2e2680-9540-4364-b878-f19c46a0bf3d</string>
-    <string name="pref_default_back_end_environment_key">c22dad22-b07e-4c08-9d9f-46617d01c6e2</string>
+    <string name="pref_default_back_end_environment_uuid">3f19f4a4-67b4-45a9-aa19-e73b9fc8bc68</string>
+    <string name="pref_default_back_end_environment_key">92d293de-ebf7-4426-8546-b98c8ebb4333</string>
 
     <!--<string name="pref_default_gcm_sender_id">816486687340</string>-->
 
