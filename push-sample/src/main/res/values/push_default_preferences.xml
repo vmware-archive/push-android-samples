@@ -10,27 +10,18 @@
     <!-- This parameter is required to register with GCM.  It's the same as the Project Number assigned by Google    -->
     <!-- Cloud Console.  You will also need to enter this value in your "variant" in the Pivotal Mobile Services Suite -->
     <!-- Push Server admin console.                                                                                  -->
-
     <string name="pref_default_gcm_sender_id">816486687340</string>
-    <string name="pref_default_variant_uuid">0b6e219c-9283-43e3-8b7b-dd83214ebfc8</string>
-    <string name="pref_default_variant_secret">3aa82a02-e8b8-4164-9f16-cc5da087b823</string>
-    <string name="pref_default_push_base_server_url">http://cfms-push-service-dev.main.vchs.cfms-apps.com</string>
-
-    <string name="pref_default_back_end_environment_uuid">3f19f4a4-67b4-45a9-aa19-e73b9fc8bc68</string>
-    <string name="pref_default_back_end_environment_key">92d293de-ebf7-4426-8546-b98c8ebb4333</string>
-
-    <!--<string name="pref_default_gcm_sender_id">816486687340</string>-->
 
     <!-- Set this parameter to the Variant UUID of your project in the Pivotal Mobile Services Suite Push Server     -->
     <!-- admin console.  It is used during the registration process.                                                 -->
-    <!--<string name="pref_default_variant_uuid">5ad8f487-c7ea-4d4e-8c8c-8799528d53d9</string>-->
+    <string name="pref_default_variant_uuid">0b6e219c-9283-43e3-8b7b-dd83214ebfc8</string>
 
     <!-- Set this parameter to the Variant Secret of your project in the Pivotal Mobile Services Suite Push Server   -->
     <!-- admin console.  It is used during the registration process.                                                 -->
-    <!--<string name="pref_default_variant_secret">888a9725-d0f9-41a2-8c32-26f1abc50139</string>-->
+    <string name="pref_default_variant_secret">3aa82a02-e8b8-4164-9f16-cc5da087b823</string>
 
     <!-- The base URI of the Pivotal Mobile Services Suite server that is used to provide client push services.      -->
-    <!--<string name="pref_default_push_base_server_url">http://ec2-54-87-125-154.compute-1.amazonaws.com</string>-->
+    <string name="pref_default_push_base_server_url">http://push-notifications.one.pepsi.cf-app.com</string>
 
     <!-- You are free to set this parameter to whatever you like.  It is used during the registration process.       -->
     <string name="pref_default_device_alias">push-sample-alias</string>
@@ -42,7 +33,7 @@
     <!-- These two parameters are only required if you want to send push messages via the Pivotal Mobile Services Suite -->
     <!-- server in the sample app.  They are not used during the registration process.  You should be able to obtain -->
     <!-- them by creating an application in the Pivotal Mobile Services Suite Push Server admin console.             -->
-    <!--<string name="pref_default_back_end_environment_uuid">b1b7939e-8505-4f12-934e-41b78298c1e5</string>-->
-    <!--<string name="pref_default_back_end_environment_key">b1875c36-5c02-4680-ba45-eef7d5bba299</string>-->
+    <string name="pref_default_back_end_environment_uuid">3f19f4a4-67b4-45a9-aa19-e73b9fc8bc68</string>
+    <string name="pref_default_back_end_environment_key">92d293de-ebf7-4426-8546-b98c8ebb4333</string>
 
 </resources>

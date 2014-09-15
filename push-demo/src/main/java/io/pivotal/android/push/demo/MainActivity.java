@@ -25,10 +25,10 @@ public class MainActivity extends ActionBarActivity {
     private static final String VARIANT_SECRET = "05254dc4-7a44-4069-8033-37784e4be8fc";
 
     // Set to your instance of the Pivotal Mobile Services Suite server providing your push services.
-    private static final String PUSH_BASE_SERVER_URL = "http://cfms-push-service-dev.main.vchs.cfms-apps.com";
+    private static final String PUSH_BASE_SERVER_URL = "http://push-notifications.one.pepsi.cf-app.com";
 
     // Set to your own defined alias for this device.  May not be null.  May be empty.
-    private static final String DEVICE_ALIAS = "push-demo-alias";
+    private static final String DEVICE_ALIAS = "push-device-alias";
 
     // Set to the list of tags you'd like to subscribe to.  May be empty or null.
     private static final Set<String> TAGS = null;
