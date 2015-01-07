@@ -13,8 +13,8 @@ public class BackEndMessageRequest {
     @SerializedName("target")
     public BackEndMessageTarget target;
 
-    public BackEndMessageRequest(String messageBody, String platforms, String[] devices) {
+    public BackEndMessageRequest(String messageBody, String[] devices) {
         this.message = new BackEndMessageRequestData(messageBody);
-        this.target = new BackEndMessageTarget(platforms, devices);
+        this.target = new BackEndMessageTarget(devices);
     }
 }

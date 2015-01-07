@@ -9,9 +9,10 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
+import io.pivotal.android.push.sample.R;
+
 public class LogItemLongClickDialogFragment extends DialogFragment{
 
-    public static final CharSequence[] items = new CharSequence[] {"Copy Item", "Copy All Items", "Clear Log", "Cancel"};
     public static final int COPY_ITEM = 0;
     public static final int COPY_ALL_ITEMS = 1;
     public static final int CLEAR_LOG = 2;
@@ -28,8 +29,9 @@ public class LogItemLongClickDialogFragment extends DialogFragment{
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final CharSequence[] items = getResources().getStringArray(R.array.copy_items);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Log Item");
+        builder.setTitle(R.string.log_item_title);
         builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {

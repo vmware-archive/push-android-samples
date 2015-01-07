@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.adapter.MessageLogger;
 import io.pivotal.android.push.sample.dialog.SendMessageDialogFragment;
 import io.pivotal.android.push.sample.model.BackEndMessageRequest;
@@ -27,6 +28,13 @@ import io.pivotal.android.push.sample.util.Preferences;
 import io.pivotal.android.push.util.DebugUtil;
 
 public class MessageSender {
+
+    private static final String POST = "POST";
+    private static final String CONTENT_TYPE = "Content-Type";
+    private static final String APPLICATION_JSON = "application/json";
+    private static final String GCM_REGISTRATION_ID = "gcm_registration_id";
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String DEVICE_UUID = "device_uuid";
 
     private final FragmentActivity context;
     private final MessageLogger logger;
@@ -41,12 +49,12 @@ public class MessageSender {
 
     public void sendMessage() {
         if (!DebugUtil.getInstance(context).isDebuggable()) {
-            Toast.makeText(context, "This feature does not work in release builds.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.release_build_error, Toast.LENGTH_LONG).show();
             return;
         }
         final File externalFilesDir = context.getExternalFilesDir(null);
         if (externalFilesDir == null) {
-            Toast.makeText(context, "This feature requires the SD-card to be mounted.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.sdcard_error, Toast.LENGTH_LONG).show();
             return;
         }
         final SendMessageDialogFragment.Listener listener = new SendMessageDialogFragment.Listener() {
@@ -68,11 +76,11 @@ public class MessageSender {
         logger.updateLogRowColour();
         final String data = getBackEndMessageRequestString();
         if (data == null) {
-            logger.addLogMessage("Can not send message. Please register first.");
+            logger.addLogMessage(R.string.need_to_be_registered_error);
             return;
         }
-        logger.addLogMessage("Sending message via back-end server...");
-        logger.addLogMessage("Message body data: \"" + data + "\"");
+        logger.addLogMessage(R.string.back_end_sending_message);
+        logger.addLogMessage(context.getString(R.string.message_body_data) + data);
 
         AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
             @Override
@@ -84,7 +92,7 @@ public class MessageSender {
                     final URL url = new URL(Preferences.getPushBaseServerUrl(context) + "/" + BACK_END_SEND_MESSAGE_URL);
                     final HttpURLConnection urlConnection = getUrlConnection(url);
                     urlConnection.setDoOutput(true);
-                    urlConnection.addRequestProperty("Authorization", getBasicAuthorizationValue());
+                    urlConnection.addRequestProperty(AUTHORIZATION, getBasicAuthorizationValue());
                     urlConnection.connect();
 
                     outputStream = new BufferedOutputStream(urlConnection.getOutputStream());
@@ -92,15 +100,15 @@ public class MessageSender {
 
                     final int statusCode = urlConnection.getResponseCode();
                     if (statusCode >= 200 && statusCode < 300) {
-                        logger.queueLogMessage("Back-end server accepted network request to send message. HTTP response status code is " + statusCode + ".");
+                        logger.queueLogMessage(context.getString(R.string.back_end_message_request_accepted) + statusCode);
                     } else {
-                        logger.queueLogMessage("Back-end server rejected network request to send message. HTTP response status code is " + statusCode + ".");
+                        logger.queueLogMessage(context.getString(R.string.back_end_server_send_message_error) + statusCode);
                     }
 
                     urlConnection.disconnect();
 
                 } catch (IOException e) {
-                    logger.queueLogMessage("ERROR: got exception parsing network response from Back-end server: " + e.getLocalizedMessage());
+                    logger.queueLogMessage(context.getString(R.string.back_end_parse_error) + e.getLocalizedMessage());
 
                 } finally {
                     if (outputStream != null) {
@@ -117,9 +125,9 @@ public class MessageSender {
     }
 
     private String getBasicAuthorizationValue() {
-        final String environmentUuid = Preferences.getBackEndEnvironmentUuid(context);
-        final String environmentKey = Preferences.getBackEndEnvironmentKey(context);
-        final String stringToEncode = environmentUuid + ":" + environmentKey;
+        final String appUuid = Preferences.getBackEndAppUuid(context);
+        final String apiKey = Preferences.getBackEndApiKey(context);
+        final String stringToEncode = appUuid + ":" + apiKey;
         return "Basic  " + Base64.encodeToString(stringToEncode.getBytes(), Base64.DEFAULT | Base64.NO_WRAP);
     }
 
@@ -132,14 +140,13 @@ public class MessageSender {
     }
 
     private String getBackEndMessageRequestString() {
-        final String device_uuid = readIdFromFile("device_uuid");
+        final String device_uuid = readIdFromFile(DEVICE_UUID);
         if (device_uuid == null) {
             return null;
         }
         final String[] devices = new String[]{device_uuid};
-        final String platforms = "android";
-        final String messageBody = "This message was sent to the back-end at " + logger.getLogTimestamp() + "." ;
-        final BackEndMessageRequest messageRequest = new BackEndMessageRequest(messageBody, platforms, devices);
+        final String messageBody = context.getString(R.string.back_end_message) + logger.getLogTimestamp();
+        final BackEndMessageRequest messageRequest = new BackEndMessageRequest(messageBody, devices);
         final Gson gson = new Gson();
         return gson.toJson(messageRequest);
     }
@@ -148,11 +155,11 @@ public class MessageSender {
         logger.updateLogRowColour();
         final String data = getGcmMessageRequestString();
         if (data == null) {
-            logger.addLogMessage("Can not send message. Please register first.");
+            logger.addLogMessage(R.string.need_to_be_registered_error);
             return;
         }
-        logger.addLogMessage("Sending message via GCM...");
-        logger.addLogMessage("Message body data: \"" + data + "\"");
+        logger.addLogMessage(R.string.gcm_sending_message);
+        logger.addLogMessage(context.getString(R.string.message_body_data) + data);
 
         final AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
             @Override
@@ -161,7 +168,7 @@ public class MessageSender {
                 try {
                     final URL url = new URL(GCM_SEND_MESSAGE_URL);
                     final HttpURLConnection urlConnection = getUrlConnection(url);
-                    urlConnection.addRequestProperty("Authorization", "key=" + Preferences.getGcmBrowserApiKey(context));
+                    urlConnection.addRequestProperty(AUTHORIZATION, "key=" + Preferences.getGcmBrowserApiKey(context));
                     urlConnection.setDoOutput(true);
                     urlConnection.connect();
 
@@ -170,15 +177,15 @@ public class MessageSender {
 
                     final int statusCode = urlConnection.getResponseCode();
                     if (statusCode >= 200 && statusCode < 300) {
-                        logger.queueLogMessage("GCM server accepted network request to send message. HTTP response status code is " + statusCode + ".");
+                        logger.queueLogMessage(context.getString(R.string.gcm_message_request_accepted) + statusCode);
                     } else {
-                        logger.queueLogMessage("GCM server rejected network request to send message. HTTP response status code is " + statusCode + ".");
+                        logger.queueLogMessage(context.getString(R.string.gcm_message_send_message_error) + statusCode);
                     }
 
                     urlConnection.disconnect();
 
                 } catch (Exception e) {
-                    logger.queueLogMessage("ERROR: got exception posting message to GCM server: " + e.getLocalizedMessage());
+                    logger.queueLogMessage(context.getString(R.string.gcm_parse_error) + e.getLocalizedMessage());
                 }
 
                 finally {
@@ -197,20 +204,20 @@ public class MessageSender {
     private HttpURLConnection getUrlConnection(URL url) throws IOException {
         final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setDoInput(true);
-        urlConnection.setRequestMethod("POST");
+        urlConnection.setRequestMethod(POST);
         urlConnection.setConnectTimeout(60000);
         urlConnection.setReadTimeout(60000);
-        urlConnection.addRequestProperty("Content-Type", "application/json");
+        urlConnection.addRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
         return urlConnection;
     }
 
     private String getGcmMessageRequestString() {
-        final String regId = readIdFromFile("gcm_registration_id");
+        final String regId = readIdFromFile(GCM_REGISTRATION_ID);
         if (regId == null) {
             return null;
         }
         final String[] devices = new String[]{regId};
-        final String message = "This message was sent to GCM at " + logger.getLogTimestamp() + ".";
+        final String message = context.getString(R.string.gcm_message) + logger.getLogTimestamp();
         final GcmMessageRequest messageRequest = new GcmMessageRequest(devices, message);
         final Gson gson = new Gson();
         return gson.toJson(messageRequest);
@@ -219,13 +226,13 @@ public class MessageSender {
     private String readIdFromFile(String idType) {
         final File externalFilesDir = context.getExternalFilesDir(null);
         if (externalFilesDir == null) {
-            logger.addLogMessage("ERROR: Was not able to get the externalFilesDir");
+            logger.addLogMessage(R.string.external_files_dir_error);
             return null;
         }
         final File dir = new File(externalFilesDir.getAbsolutePath() + File.separator + "pushlib");
         final File regIdFile = new File(dir, idType + ".txt");
         if (!regIdFile.exists() || !regIdFile.canRead()) {
-            logger.addLogMessage("ERROR: " + idType + " file not found (" + regIdFile.getAbsoluteFile() + "). Have you registered with GCM and the back-end successfully? Are you running a debug build? Is the external cache directory accessible?");
+            logger.addLogMessage(context.getString(R.string.read_file_error, idType, regIdFile.getAbsoluteFile()));
             return null;
         }
         FileReader fr = null;
@@ -236,7 +243,7 @@ public class MessageSender {
             return br.readLine();
 
         } catch (Exception e) {
-            logger.addLogMessage("ERROR reading " + idType + " file:" + e.getLocalizedMessage());
+            logger.addLogMessage(context.getString(R.string.error_reading_file, idType, e.getLocalizedMessage()));
             return null;
         } finally {
             if (br != null) {

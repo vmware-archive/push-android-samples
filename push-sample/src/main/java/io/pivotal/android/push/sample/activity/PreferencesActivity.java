@@ -3,6 +3,7 @@
  */
 package io.pivotal.android.push.sample.activity;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.SharedPreferences;
@@ -60,7 +61,7 @@ public class PreferencesActivity extends PreferenceActivity {
     }
 
     private void addPreferences(String[] preferenceNames) {
-        preferenceMap = new HashMap<String, Preference>();
+        preferenceMap = new HashMap<>();
         for (final String preferenceName: preferenceNames) {
             addPreference(preferenceName);
         }
@@ -134,6 +135,7 @@ public class PreferencesActivity extends PreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressLint("CommitPrefEdits")
     private void resetPreferencesToDefault() {
         final SharedPreferences prefs = getPreferenceScreen().getSharedPreferences();
         prefs.edit().clear().commit();

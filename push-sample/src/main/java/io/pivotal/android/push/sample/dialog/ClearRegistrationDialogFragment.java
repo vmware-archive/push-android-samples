@@ -9,9 +9,10 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
+import io.pivotal.android.push.sample.R;
+
 public class ClearRegistrationDialogFragment extends DialogFragment {
 
-    public static final CharSequence[] items = new CharSequence[] {"GCM", "Back-end", "Both", "Cancel"};
     public static final int CLEAR_REGISTRATIONS_FROM_GCM = 0;
     public static final int CLEAR_REGISTRATIONS_FROM_BACK_END = 1;
     public static final int CLEAR_REGISTRATIONS_FROM_BOTH = 2;
@@ -28,8 +29,10 @@ public class ClearRegistrationDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final CharSequence[] items = getResources().getStringArray(R.array.clear_registrations);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Clear Registrations");
+        builder.setTitle(R.string.clear_registrations);
+
         builder.setItems(items, new DialogInterface.OnClickListener() {
 
             @Override

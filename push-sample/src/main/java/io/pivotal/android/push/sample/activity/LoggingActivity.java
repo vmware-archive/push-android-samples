@@ -26,6 +26,7 @@ import java.util.List;
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.adapter.LogAdapter;
 import io.pivotal.android.push.sample.adapter.MessageLogger;
+import io.pivotal.android.push.sample.dialog.AboutDialogFragment;
 import io.pivotal.android.push.sample.dialog.LogItemLongClickDialogFragment;
 import io.pivotal.android.push.sample.model.LogItem;
 import io.pivotal.android.push.sample.util.StringUtil;
@@ -38,7 +39,7 @@ public abstract class LoggingActivity extends ActionBarActivity implements Messa
     private static final int[] baseRowColours = new int[]{0xddeeff, 0xddffee, 0xffeedd};
 
     private static int currentBaseRowColour = 0;
-    protected static List<LogItem> logItems = new ArrayList<LogItem>();
+    protected static final List<LogItem> logItems = new ArrayList<>();
 
     private ListView listView;
     private LogAdapter adapter;
@@ -75,6 +76,11 @@ public abstract class LoggingActivity extends ActionBarActivity implements Messa
     }
 
     @Override
+    public void queueLogMessage(final int stringResourceId) {
+        queueLogMessage(getString(stringResourceId));
+    }
+
+    @Override
     public void queueLogMessage(final String message) {
         if (ThreadUtil.isUIThread()) {
             addLogMessage(message);
@@ -89,7 +95,12 @@ public abstract class LoggingActivity extends ActionBarActivity implements Messa
     }
 
     @Override
-    public void addLogMessage(String message) {
+    public void addLogMessage(final int stringResourceId) {
+        addLogMessage(getString(stringResourceId));
+    }
+
+    @Override
+    public void addLogMessage(final String message) {
         final String timestamp = getLogTimestamp();
         final LogItem logItem = new LogItem(timestamp, message, baseRowColours[currentBaseRowColour]);
         logItems.add(logItem);
@@ -116,7 +127,6 @@ public abstract class LoggingActivity extends ActionBarActivity implements Messa
 
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
-                final int originalViewBackgroundColour = adapter.getBackgroundColour(position);
                 final LogItem logItem = (LogItem) adapter.getItem(position);
                 final LogItemLongClickDialogFragment.Listener listener = new LogItemLongClickDialogFragment.Listener() {
 
@@ -131,7 +141,7 @@ public abstract class LoggingActivity extends ActionBarActivity implements Messa
                                 final android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                                 clipboardManager.setText(logItem.message);
                             }
-                            Toast.makeText(LoggingActivity.this, "Log item copied to clipboard", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoggingActivity.this, R.string.log_item_copied, Toast.LENGTH_SHORT).show();
                         } else if (result == LogItemLongClickDialogFragment.COPY_ALL_ITEMS) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                                 final ClipData clipData = ClipData.newPlainText("log text", getLogAsString());
@@ -141,7 +151,7 @@ public abstract class LoggingActivity extends ActionBarActivity implements Messa
                                 final android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                                 clipboardManager.setText(getLogAsString());
                             }
-                            Toast.makeText(LoggingActivity.this, "Log copied to clipboard", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoggingActivity.this, R.string.log_copied, Toast.LENGTH_SHORT).show();
                         } else if (result == LogItemLongClickDialogFragment.CLEAR_LOG) {
                             logItems.clear();
                             adapter.notifyDataSetChanged();
@@ -157,7 +167,7 @@ public abstract class LoggingActivity extends ActionBarActivity implements Messa
     }
 
     public String getLogAsString() {
-        final List<String> lines = new LinkedList<String>();
+        final List<String> lines = new LinkedList<>();
         for (final LogItem logItem : logItems) {
             lines.add(logItem.timestamp + "\t" + logItem.message);
         }
@@ -176,6 +186,10 @@ public abstract class LoggingActivity extends ActionBarActivity implements Messa
         final int itemId = item.getItemId();
         if (itemId == R.id.action_edit_preferences) {
             editPreferences();
+
+        } else if (itemId == R.id.menu_about) {
+            showAboutDialog();
+
         } else {
             return super.onOptionsItemSelected(item);
         }
@@ -186,5 +200,10 @@ public abstract class LoggingActivity extends ActionBarActivity implements Messa
         final Class<? extends PreferencesActivity> activityClass = getPreferencesActivity();
         final Intent intent = new Intent(this, activityClass);
         startActivity(intent);
+    }
+
+    private void showAboutDialog() {
+        final AboutDialogFragment dialog = new AboutDialogFragment();
+        dialog.show(getSupportFragmentManager(), "AboutDialogFragment");
     }
 }

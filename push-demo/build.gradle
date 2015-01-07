@@ -1,4 +1,4 @@
 dependencies {
-    compile 'io.pivotal.android:push:1.0.1'
+    compile pushSdk
     compile 'com.android.support:appcompat-v7:19.+'
 }

@@ -9,9 +9,10 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
+import io.pivotal.android.push.sample.R;
+
 public class SendMessageDialogFragment extends DialogFragment {
 
-    public static final CharSequence[] items = new CharSequence[] {"Via GCM", "Via Back-End", "Cancel"};
     public static final int VIA_GCM = 0;
     public static final int VIA_BACK_END = 1;
     public static final int CANCELLED = 2;
@@ -27,8 +28,9 @@ public class SendMessageDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final CharSequence[] items = getResources().getStringArray(R.array.send_via_items);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Send Message");
+        builder.setTitle(R.string.send_message_title);
         builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {

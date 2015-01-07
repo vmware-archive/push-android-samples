@@ -3,6 +3,10 @@
  */
 package io.pivotal.android.push.demo;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.TextView;
@@ -18,14 +22,14 @@ public class MainActivity extends ActionBarActivity {
     // Set to your "Project Number" on your Google Cloud project
     private static final String GCM_SENDER_ID = "420180631899";
 
-    // Set to your "Variant UUID", as provided by the Pivotal Mobile Services Suite console
+    // Set to your "Variant UUID", as provided by the Pivotal CF Mobile Services console
     private static final String VARIANT_UUID = "152e347a-44ef-4aee-ba20-49da16877fc8";
 
-    // Set to your "Variant Secret" as provided by the Pivotal Mobile Services Suite console
+    // Set to your "Variant Secret" as provided by the Pivotal CF Mobile Services console
     private static final String VARIANT_SECRET = "05254dc4-7a44-4069-8033-37784e4be8fc";
 
-    // Set to your instance of the Pivotal Mobile Services Suite server providing your push services.
-    private static final String PUSH_BASE_SERVER_URL = "http://push-notifications.one.pepsi.cf-app.com";
+    // Set to your instance of the Pivotal CF Mobile Services Push server providing your push services.
+    private static final String PUSH_BASE_SERVER_URL = "http://transit-push.cfapps.io";
 
     // Set to your own defined alias for this device.  May not be null.  May be empty.
     private static final String DEVICE_ALIAS = "push-device-alias";
@@ -33,12 +37,12 @@ public class MainActivity extends ActionBarActivity {
     // Set to the list of tags you'd like to subscribe to.  May be empty or null.
     private static final Set<String> TAGS = null;
 
+    private BroadcastReceiver messageBroadcastReceiver = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        queueLogMessage("Any push notifications you receive will appear on your device status bar.");
     }
 
     @Override
@@ -51,10 +55,36 @@ public class MainActivity extends ActionBarActivity {
         queueLogMessage("DEVICE_ALIAS: " + DEVICE_ALIAS);
         queueLogMessage("PUSH_BASE_SERVER_URL: " + PUSH_BASE_SERVER_URL);
         queueLogMessage("TAGS: " + TAGS);
-
         queueLogMessage("Registering for notifications...");
 
         registerForPushNotifications();
+
+        messageBroadcastReceiver = getBroadcastReceiver();
+        IntentFilter intentFilter = getIntentFilter();
+        registerReceiver(messageBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(messageBroadcastReceiver);
+        messageBroadcastReceiver = null;
+    }
+
+    private BroadcastReceiver getBroadcastReceiver() {
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent != null) {
+                    String message = intent.getStringExtra(PushService.MESSAGE_KEY);
+                    queueLogMessage(message);
+                }
+            }
+        };
+    }
+
+    private IntentFilter getIntentFilter() {
+        return new IntentFilter(PushService.ACTION_KEY);
     }
 
     private void registerForPushNotifications() {

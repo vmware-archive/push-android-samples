@@ -3,6 +3,7 @@
  */
 package io.pivotal.android.push.sample.activity;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -27,6 +28,15 @@ import io.pivotal.android.push.sample.util.Preferences;
 
 public class MainActivity extends LoggingActivity {
 
+    private static final String GCM_SENDER_ID = "gcm_sender_id";
+    private static final String GCM_DEVICE_REGISTRATION_ID = "gcm_device_registration_id";
+    private static final String APP_VERSION = "app_version";
+    private static final String VARIANT_UUID = "variant_uuid";
+    private static final String VARIANT_SECRET = "variant_secret";
+    private static final String DEVICE_ALIAS = "device_alias";
+    private static final String BACKEND_DEVICE_REGISTRATION_ID = "backend_device_registration_id";
+    private static final String BASE_SERVER_URL = "base_server_url";
+
     private Push push;
     private MessageSender sender;
 
@@ -35,7 +45,7 @@ public class MainActivity extends LoggingActivity {
         super.onCreate(savedInstanceState);
 
         if (logItems.isEmpty()) {
-            addLogMessage("Press the \"Register\" button to attempt registration.");
+            addLogMessage(R.string.registration_instructions);
         }
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
@@ -98,35 +108,35 @@ public class MainActivity extends LoggingActivity {
 
     private void register() {
         updateLogRowColour();
-        addLogMessage("Starting registration...");
+        addLogMessage(R.string.starting_registration);
 
         push.startRegistration(getRegistrationParameters(), new RegistrationListener() {
 
             @Override
             public void onRegistrationComplete() {
-                queueLogMessage("Registration successful.");
+                queueLogMessage(R.string.registration_successful);
             }
 
             @Override
             public void onRegistrationFailed(String reason) {
-                queueLogMessage("Registration failed. Reason is '" + reason + "'.");
+                queueLogMessage(getString(R.string.registration_failed) + reason);
             }
         });
     }
 
     private void unregister() {
         updateLogRowColour();
-        addLogMessage("Starting unregistration...");
+        addLogMessage(R.string.starting_unregistration);
 
         push.startUnregistration(getRegistrationParameters(), new UnregistrationListener() {
             @Override
             public void onUnregistrationComplete() {
-                queueLogMessage("Unregistration successful.");
+                queueLogMessage(R.string.unregistration_successful);
             }
 
             @Override
             public void onUnregistrationFailed(String reason) {
-                queueLogMessage("Unregistration failed. Reason is '" + reason + "'.");
+                queueLogMessage(getString(R.string.unregistration_failed) + reason);
             }
         });
     }
@@ -138,30 +148,31 @@ public class MainActivity extends LoggingActivity {
         final String deviceAlias = Preferences.getDeviceAlias(this);
         final String baseServerUrl = Preferences.getPushBaseServerUrl(this);
         final Set<String> tags = null; // TODO - put in some tags
-        addLogMessage("GCM Sender ID: '" + gcmSenderId + "'\nVariant UUID: '" + variantUuid + "\nVariant Secret: '" + variantSecret + "'\nDevice Alias: '" + deviceAlias + "'\nBase Server URL: '" + baseServerUrl + "'.");
+        addLogMessage(getString(R.string.registration_params, gcmSenderId, variantUuid, variantSecret, deviceAlias, baseServerUrl));
         return new RegistrationParameters(gcmSenderId, variantUuid, variantSecret, deviceAlias, baseServerUrl, tags);
     }
 
     private void clearRegistration() {
         final ClearRegistrationDialogFragment.Listener listener = new ClearRegistrationDialogFragment.Listener() {
 
+            @SuppressLint("CommitPrefEdits")
             @Override
             public void onClickResult(int result) {
                 if (result != ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_CANCELLED) {
                     final SharedPreferences.Editor editor = getSharedPreferences(PushPreferencesProviderImpl.TAG_NAME, Context.MODE_PRIVATE).edit();
                     if (result == ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_FROM_GCM || result == ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_FROM_BOTH) {
-                        addLogMessage("Clearing device registration from GCM");
-                        editor.remove("gcm_sender_id");
-                        editor.remove("gcm_device_registration_id");
-                        editor.remove("app_version");
+                        addLogMessage(R.string.clearing_gcm_device_registration);
+                        editor.remove(GCM_SENDER_ID);
+                        editor.remove(GCM_DEVICE_REGISTRATION_ID);
+                        editor.remove(APP_VERSION);
                     }
                     if (result == ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_FROM_BACK_END || result == ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_FROM_BOTH) {
-                        addLogMessage("Clearing device registration from the back-end");
-                        editor.remove("variant_uuid");
-                        editor.remove("variant_secret");
-                        editor.remove("device_alias");
-                        editor.remove("backend_device_registration_id");
-                        editor.remove("base_server_url");
+                        addLogMessage(R.string.clear_backend_device_registration);
+                        editor.remove(VARIANT_UUID);
+                        editor.remove(VARIANT_SECRET);
+                        editor.remove(DEVICE_ALIAS);
+                        editor.remove(BACKEND_DEVICE_REGISTRATION_ID);
+                        editor.remove(BASE_SERVER_URL);
                     }
                     editor.commit();
                 }

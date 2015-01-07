@@ -5,34 +5,32 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.2'
-    }
-}
-
-ext {
-    versionName = "1.0"
-    versionCode = 1
-}
-
-allprojects {
-    repositories {
-        mavenCentral()
-        maven {url 'https://maven.xtremelabs.com/artifactory/libs-release-local'}
+        classpath 'com.android.tools.build:gradle:1.0.0'
     }
 }
 
 subprojects {
+    repositories {
+        mavenCentral()
+        maven {url 'https://maven.xtremelabs.com/artifactory/libs-release-local'}
+    }
+
+    ext {
+        // Pivotal CF Mobile Services dependencies
+        pushSdk = 'io.pivotal.android:push:1.0.2'
+    }
+
     apply plugin: 'android'
 
     android {
-        compileSdkVersion 19
-        buildToolsVersion "19.1.0"
+        compileSdkVersion 21
+        buildToolsVersion "21.1.2"
 
         defaultConfig {
-            versionCode versionCode
-            versionName versionName
+            versionCode 2
+            versionName "1.0.2"
             minSdkVersion 10
-            targetSdkVersion 19
+            targetSdkVersion 21
         }
     }
 }

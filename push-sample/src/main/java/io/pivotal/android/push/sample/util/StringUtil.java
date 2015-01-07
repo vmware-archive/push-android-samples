@@ -25,37 +25,13 @@ public class StringUtil {
 			return "";
 
 		StringBuilder buffer = new StringBuilder();
-		Iterator<?> iter = collection.iterator();
-		while (iter.hasNext()) {
-			buffer.append(iter.next());
-			if (iter.hasNext()) {
+		Iterator<?> i = collection.iterator();
+		while (i.hasNext()) {
+			buffer.append(i.next());
+			if (i.hasNext()) {
 				buffer.append(delimiter);
 			}
 		}
 		return buffer.toString();
-	}
-
-	/**
-	 * Appends the string `append` to `string` separated by the `delimiter` string.
-	 * 
-	 * @param string
-	 *            the string in front
-	 * @param append
-	 *            the string to append
-	 * @param delimiter
-	 *            the string that separates `string` and `append`
-	 * @return appended string of `string` + `delimiter` + `append`, or `null` if `string` if `string` is `null`.
-	 */
-	public static String append(final String string, final String append, final String delimiter) {
-		if (string == null) {
-			return append;
-		} else {
-			final StringBuilder builder = new StringBuilder(string);
-			if (delimiter != null)
-				builder.append(delimiter);
-			if (append != null)
-				builder.append(append);
-			return builder.toString();
-		}
 	}
 }
