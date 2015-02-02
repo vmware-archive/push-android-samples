@@ -5,12 +5,12 @@ package io.pivotal.android.push.sample.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class BackEndMessageTarget {
+public class PCFPushMessageRequestData {
 
-    @SerializedName("devices")
-    public String[] devices;
+    @SerializedName("body")
+    public String body;
 
-    public BackEndMessageTarget(String[] devices) {
-        this.devices = devices;
+    public PCFPushMessageRequestData(String body) {
+        this.body = body;
     }
 }

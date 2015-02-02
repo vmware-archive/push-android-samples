@@ -13,10 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import java.util.Set;
-
 import io.pivotal.android.push.Push;
-import io.pivotal.android.push.RegistrationParameters;
 import io.pivotal.android.push.prefs.PushPreferencesProviderImpl;
 import io.pivotal.android.push.registration.RegistrationListener;
 import io.pivotal.android.push.registration.UnregistrationListener;
@@ -110,25 +107,30 @@ public class MainActivity extends LoggingActivity {
         updateLogRowColour();
         addLogMessage(R.string.starting_registration);
 
-        push.startRegistration(getRegistrationParameters(), new RegistrationListener() {
+        try {
+            // TODO - find a way to let the user supply tags
+            push.startRegistration(Preferences.getDeviceAlias(this), null, new RegistrationListener() {
 
-            @Override
-            public void onRegistrationComplete() {
-                queueLogMessage(R.string.registration_successful);
-            }
+                @Override
+                public void onRegistrationComplete() {
+                    queueLogMessage(R.string.registration_successful);
+                }
 
-            @Override
-            public void onRegistrationFailed(String reason) {
-                queueLogMessage(getString(R.string.registration_failed) + reason);
-            }
-        });
+                @Override
+                public void onRegistrationFailed(String reason) {
+                    queueLogMessage(getString(R.string.registration_failed) + reason);
+                }
+            });
+        } catch (Exception e) {
+            queueLogMessage(e.getLocalizedMessage());
+        }
     }
 
     private void unregister() {
         updateLogRowColour();
         addLogMessage(R.string.starting_unregistration);
 
-        push.startUnregistration(getRegistrationParameters(), new UnregistrationListener() {
+        push.startUnregistration(new UnregistrationListener() {
             @Override
             public void onUnregistrationComplete() {
                 queueLogMessage(R.string.unregistration_successful);
@@ -141,17 +143,7 @@ public class MainActivity extends LoggingActivity {
         });
     }
 
-    private RegistrationParameters getRegistrationParameters() {
-        final String gcmSenderId = Preferences.getGcmSenderId(this);
-        final String variantUuid = Preferences.getVariantUuid(this);
-        final String variantSecret = Preferences.getVariantSecret(this);
-        final String deviceAlias = Preferences.getDeviceAlias(this);
-        final String baseServerUrl = Preferences.getPushBaseServerUrl(this);
-        final Set<String> tags = null; // TODO - put in some tags
-        addLogMessage(getString(R.string.registration_params, gcmSenderId, variantUuid, variantSecret, deviceAlias, baseServerUrl));
-        return new RegistrationParameters(gcmSenderId, variantUuid, variantSecret, deviceAlias, baseServerUrl, tags);
-    }
-
+    // This method cheats since it knows the names of the parameters saved by the SDK.
     private void clearRegistration() {
         final ClearRegistrationDialogFragment.Listener listener = new ClearRegistrationDialogFragment.Listener() {
 
@@ -166,8 +158,8 @@ public class MainActivity extends LoggingActivity {
                         editor.remove(GCM_DEVICE_REGISTRATION_ID);
                         editor.remove(APP_VERSION);
                     }
-                    if (result == ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_FROM_BACK_END || result == ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_FROM_BOTH) {
-                        addLogMessage(R.string.clear_backend_device_registration);
+                    if (result == ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_FROM_PCF_PUSH || result == ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_FROM_BOTH) {
+                        addLogMessage(R.string.clear_pcf_push_device_registration);
                         editor.remove(VARIANT_UUID);
                         editor.remove(VARIANT_SECRET);
                         editor.remove(DEVICE_ALIAS);

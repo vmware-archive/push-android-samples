@@ -1,5 +1,5 @@
-Pivotal Mobile Services Suite Push SDK Samples for Android
-==========================================================
+Pivotal CF Mobile Services Push SDK Samples for Android
+=======================================================
 
 Push SDK Usage
 --------------
@@ -9,7 +9,7 @@ For more information please visit the [docs site](https://github.com/cfmobile/do
 Push Demo Application
 ---------------------
 
-The Push Demo Application is an example of the simplest application possible that uses the Pivotal Mobile Services Suite
+The Push Demo Application is an example of the simplest application possible that uses the Pivotal CF Mobile Services
 Push Client SDK.  At this time, it only demonstrates how to register for push notifications.
 
 This demo application registers for push notifications in the Activity object in order to make it easier to display the
@@ -25,8 +25,8 @@ Push Sample Application
 There is a small sample application included in this repository to demonstrate and exercise the features in the Push
 Client SDK.
 
-You can use this sample application to test registration against Google Cloud Messaging (GCM) and the Pivotal Mobile Services Suite
-back-end server for push messages.  Any push messages that are received are printed to the log window.  Although not
+You can use this sample application to test registration against Google Cloud Messaging (GCM) and the Pivotal CF Mobile
+Services server for push messages.  Any push messages that are received are printed to the log window.  Although not
 currently supported by the library itself, you can also send push messages with the sample application itself.
 
 At this time, the sample application uses a dummy project on Google Cloud Console.  It is recommend that you create your
@@ -42,15 +42,15 @@ Rotate the display to landscape mode to see the captions for the action bar butt
 
 Press the `Register` button in the sample application action bar to ask the Push SDK to register the device.  If the
 device is not already registered, then you should see a lot of output scroll by as the library registers with both
-GCM and the Pivotal Mobile Services Suite.  If the device is already registered then the output should be shorter.
+GCM and Pivotal CF Mobile Services.  If the device is already registered then the output should be shorter.
 
 Press the `Unregister` button in the sample application action bar to ask the Push SDK to unregister the device.  This
-unregister option will unregister with GCM and with the Pivotal Mobile Services Suite.
+unregister option will unregister with GCM and with Pivotal CF Mobile Services.
 
 You can clear all or parts of the saved registration data with the `Clear Registration` action bar option.  Clearing
 part or all of the registration data will cause a partial or complete re-registration the next time you press the
 `Register` button.  Unlike the `Unregister` button, the `Clear Registration` button simply causes the Push Client SDK
-to "forget" that it is registered.  Both GCM and Pivotal Mobile Services Suite will still think that the device is
+to "forget" that it is registered.  Both GCM and Pivotal CF Mobile Services will still think that the device is
 registered.
 
 You can change the registration preferences at run-time by selecting the `Edit Preferences` action bar item.  Selecting
@@ -61,9 +61,9 @@ You can reset the registration preferences to the default values by selecting th
 the Preferences screen.
 
 The sample application is also set up to receive push messages once the device has been registered with GCM and
-the Pivotal Mobile Services Suite.  Any messages that are received are printed to the log window.
+the Pivotal CF Mobile Services.  Any messages that are received are printed to the log window.
 
 Although the Push Client SDK has no support for sending push messages, the Push Sample App can do it for you as long
 as it is set up with the correct `GCM Browser API Key` parameter (when sending messages via GCM or the correct
-`Environment UUID` and `Environment Key` parameters (when sending messages via Pivotal Mobile Services Suite).  The
+`Environment UUID` and `Environment Key` parameters (when sending messages via Pivotal CF Mobile Services).  The
 application can not distinguish between messages sent via the two services.

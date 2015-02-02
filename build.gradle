@@ -11,13 +11,14 @@ buildscript {
 
 subprojects {
     repositories {
+        mavenLocal()
         mavenCentral()
         maven {url 'https://maven.xtremelabs.com/artifactory/libs-release-local'}
     }
 
     ext {
         // Pivotal CF Mobile Services dependencies
-        pushSdk = 'io.pivotal.android:push:1.0.2'
+        pushSdk = 'io.pivotal.android:push:1.0.3'
     }
 
     apply plugin: 'android'
@@ -27,8 +28,8 @@ subprojects {
         buildToolsVersion "21.1.2"
 
         defaultConfig {
-            versionCode 2
-            versionName "1.0.2"
+            versionCode 3
+            versionName "1.0.3"
             minSdkVersion 10
             targetSdkVersion 21
         }

@@ -19,10 +19,11 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import io.pivotal.android.push.prefs.Pivotal;
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.adapter.MessageLogger;
 import io.pivotal.android.push.sample.dialog.SendMessageDialogFragment;
-import io.pivotal.android.push.sample.model.BackEndMessageRequest;
+import io.pivotal.android.push.sample.model.PCFPushMessageRequest;
 import io.pivotal.android.push.sample.model.GcmMessageRequest;
 import io.pivotal.android.push.sample.util.Preferences;
 import io.pivotal.android.push.util.DebugUtil;
@@ -45,7 +46,7 @@ public class MessageSender {
     }
 
     private static final String GCM_SEND_MESSAGE_URL = "https://android.googleapis.com/gcm/send";
-    private static final String BACK_END_SEND_MESSAGE_URL = "v1/push";
+    private static final String PCF_PUSH_SEND_MESSAGE_URL = "v1/push";
 
     public void sendMessage() {
         if (!DebugUtil.getInstance(context).isDebuggable()) {
@@ -62,8 +63,8 @@ public class MessageSender {
             public void onClickResult(int result) {
                 if (result == SendMessageDialogFragment.VIA_GCM) {
                     sendMessageViaGcm();
-                } else if (result == SendMessageDialogFragment.VIA_BACK_END) {
-                    sendMessageViaBackEnd();
+                } else if (result == SendMessageDialogFragment.VIA_PCF_PUSH) {
+                    sendMessageViaPCFPush();
                 }
             }
         };
@@ -72,14 +73,14 @@ public class MessageSender {
         dialog.show(context.getSupportFragmentManager(), "SendMessageDialogFragment");
     }
 
-    private void sendMessageViaBackEnd() {
+    private void sendMessageViaPCFPush() {
         logger.updateLogRowColour();
-        final String data = getBackEndMessageRequestString();
+        final String data = getPCFPushMessageRequestString();
         if (data == null) {
             logger.addLogMessage(R.string.need_to_be_registered_error);
             return;
         }
-        logger.addLogMessage(R.string.back_end_sending_message);
+        logger.addLogMessage(R.string.pcf_sending_message);
         logger.addLogMessage(context.getString(R.string.message_body_data) + data);
 
         AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
@@ -89,7 +90,7 @@ public class MessageSender {
                 OutputStream outputStream = null;
 
                 try {
-                    final URL url = new URL(Preferences.getPushBaseServerUrl(context) + "/" + BACK_END_SEND_MESSAGE_URL);
+                    final URL url = new URL(Pivotal.getServiceUrl() + "/" + PCF_PUSH_SEND_MESSAGE_URL);
                     final HttpURLConnection urlConnection = getUrlConnection(url);
                     urlConnection.setDoOutput(true);
                     urlConnection.addRequestProperty(AUTHORIZATION, getBasicAuthorizationValue());
@@ -100,15 +101,15 @@ public class MessageSender {
 
                     final int statusCode = urlConnection.getResponseCode();
                     if (statusCode >= 200 && statusCode < 300) {
-                        logger.queueLogMessage(context.getString(R.string.back_end_message_request_accepted) + statusCode);
+                        logger.queueLogMessage(context.getString(R.string.pcf_message_request_accepted) + statusCode);
                     } else {
-                        logger.queueLogMessage(context.getString(R.string.back_end_server_send_message_error) + statusCode);
+                        logger.queueLogMessage(context.getString(R.string.pcf_server_send_message_error) + statusCode);
                     }
 
                     urlConnection.disconnect();
 
                 } catch (IOException e) {
-                    logger.queueLogMessage(context.getString(R.string.back_end_parse_error) + e.getLocalizedMessage());
+                    logger.queueLogMessage(context.getString(R.string.pcf_parse_error) + e.getLocalizedMessage());
 
                 } finally {
                     if (outputStream != null) {
@@ -125,8 +126,8 @@ public class MessageSender {
     }
 
     private String getBasicAuthorizationValue() {
-        final String appUuid = Preferences.getBackEndAppUuid(context);
-        final String apiKey = Preferences.getBackEndApiKey(context);
+        final String appUuid = Preferences.getPCFPushAppUuid(context);
+        final String apiKey = Preferences.getPCFPushApiKey(context);
         final String stringToEncode = appUuid + ":" + apiKey;
         return "Basic  " + Base64.encodeToString(stringToEncode.getBytes(), Base64.DEFAULT | Base64.NO_WRAP);
     }
@@ -139,14 +140,14 @@ public class MessageSender {
         outputStream.close();
     }
 
-    private String getBackEndMessageRequestString() {
+    private String getPCFPushMessageRequestString() {
         final String device_uuid = readIdFromFile(DEVICE_UUID);
         if (device_uuid == null) {
             return null;
         }
         final String[] devices = new String[]{device_uuid};
-        final String messageBody = context.getString(R.string.back_end_message) + logger.getLogTimestamp();
-        final BackEndMessageRequest messageRequest = new BackEndMessageRequest(messageBody, devices);
+        final String messageBody = context.getString(R.string.pcf_message) + logger.getLogTimestamp();
+        final PCFPushMessageRequest messageRequest = new PCFPushMessageRequest(messageBody, devices);
         final Gson gson = new Gson();
         return gson.toJson(messageRequest);
     }

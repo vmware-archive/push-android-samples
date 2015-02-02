@@ -9,37 +9,17 @@ import android.preference.PreferenceManager;
 
 public class Preferences {
 
-    public static final String GCM_SENDER_ID = "test_gcm_sender_id";
-    public static final String VARIANT_UUID = "test_variant_uuid";
-    public static final String VARIANT_SECRET = "test_variant_secret";
     public static final String DEVICE_ALIAS = "test_device_alias";
     public static final String GCM_BROWSER_API_KEY = "test_gcm_browser_api_key";
-    public static final String PUSH_BASE_SERVER_URL = "test_push_base_server_url";
-    public static final String BACK_END_APP_UUID = "test_back_end_app_uuid";
-    public static final String BACK_END_API_KEY = "test_back_end_api_key";
+    public static final String PCF_PUSH_APP_UUID = "test_pcf_app_uuid";
+    public static final String PCF_PUSH_API_KEY = "test_pcf_api_key";
 
     public static final String[] PREFERENCE_NAMES = {
-            GCM_SENDER_ID,
-            VARIANT_UUID,
-            VARIANT_SECRET,
             DEVICE_ALIAS,
             GCM_BROWSER_API_KEY,
-            PUSH_BASE_SERVER_URL,
-            BACK_END_APP_UUID,
-            BACK_END_API_KEY
+            PCF_PUSH_APP_UUID,
+            PCF_PUSH_API_KEY
     };
-
-    public static String getGcmSenderId(Context context) {
-        return getSharedPreferences(context).getString(GCM_SENDER_ID, null);
-    }
-
-    public static String getVariantUuid(Context context) {
-        return getSharedPreferences(context).getString(VARIANT_UUID, null);
-    }
-
-    public static String getVariantSecret(Context context) {
-        return getSharedPreferences(context).getString(VARIANT_SECRET, null);
-    }
 
     public static String getDeviceAlias(Context context) {
         return getSharedPreferences(context).getString(DEVICE_ALIAS, null);
@@ -49,16 +29,12 @@ public class Preferences {
         return getSharedPreferences(context).getString(GCM_BROWSER_API_KEY, null);
     }
 
-    public static String getPushBaseServerUrl(Context context) {
-        return getSharedPreferences(context).getString(PUSH_BASE_SERVER_URL, null);
+    public static String getPCFPushAppUuid(Context context) {
+        return getSharedPreferences(context).getString(PCF_PUSH_APP_UUID, null);
     }
 
-    public static String getBackEndAppUuid(Context context) {
-        return getSharedPreferences(context).getString(BACK_END_APP_UUID, null);
-    }
-
-    public static String getBackEndApiKey(Context context) {
-        return getSharedPreferences(context).getString(BACK_END_API_KEY, null);
+    public static String getPCFPushApiKey(Context context) {
+        return getSharedPreferences(context).getString(PCF_PUSH_API_KEY, null);
     }
 
     private static SharedPreferences getSharedPreferences(Context context) {

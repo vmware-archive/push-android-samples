@@ -55,7 +55,7 @@ public class PushService extends GcmService {
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
             .setLights(NOTIFICATION_LIGHTS_COLOUR, NOTIFICATION_LIGHTS_ON_MS, NOTIFICATION_LIGHTS_OFF_MS)
-            .setSmallIcon(R.drawable.ic_pivotal_logo)
+            .setSmallIcon(R.drawable.ic_pivotal_logo_2)
             .setContentTitle(getString(R.string.app_name))
             .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
             .setContentIntent(contentIntent)

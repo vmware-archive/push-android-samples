@@ -12,12 +12,12 @@
     <string name="action_send_message">Send Message</string>
     <string name="action_unregister">Unregister</string>
     <string name="application_version">"Application version: "</string>
-    <string name="back_end_message">"This message was sent to the back-end at "</string>
-    <string name="back_end_message_request_accepted">"Back-end server accepted network request to send message. HTTP response status code is: "</string>
-    <string name="back_end_parse_error">"ERROR: got exception parsing network response from Back-end server: "</string>
-    <string name="back_end_sending_message">Sending message via back-end server&#8230;</string>
-    <string name="back_end_server_send_message_error">"Back-end server rejected network request to send message. HTTP response status code is: "</string>
-    <string name="clear_backend_device_registration">Clearing device registration from the back-end</string>
+    <string name="pcf_message">"This message was sent to PCF Push at "</string>
+    <string name="pcf_message_request_accepted">"PCF Push server accepted network request to send message. HTTP response status code is: "</string>
+    <string name="pcf_parse_error">"ERROR: got exception parsing network response from PCF Push server: "</string>
+    <string name="pcf_sending_message">Sending message via PCF Push server&#8230;</string>
+    <string name="pcf_server_send_message_error">"PCF Push server rejected network request to send message. HTTP response status code is: "</string>
+    <string name="clear_pcf_push_device_registration">Clearing device registration from the PCF Push</string>
     <string name="clear_registrations">Clear Registrations</string>
     <string name="clearing_gcm_device_registration">Clearing device registration from GCM</string>
     <string name="component_versions">"\n\nPivotal CF Mobile Services\ncomponent versions:\n\n  "</string>
@@ -35,10 +35,10 @@
     <string name="message_body_data">"Message body data: "</string>
     <string name="need_to_be_registered_error">Can not send message. Please register first.</string>
     <string name="ok">OK</string>
-    <string name="pref_title_back_end_api_key">API Key</string>
-    <string name="pref_title_back_end_app_uuid">Application UUID</string>
-    <string name="pref_title_back_end_push_preferences">Pivotal CF Push Preferences</string>
-    <string name="pref_title_backend_registration_preferences">Pivotal CF Registration Preferences</string>
+    <string name="pref_title_pcf_api_key">API Key</string>
+    <string name="pref_title_pcf_app_uuid">Application UUID</string>
+    <string name="pref_title_pcf_push_preferences">Pivotal CF Push Preferences</string>
+    <string name="pref_title_pcf_registration_preferences">Pivotal CF Registration Preferences</string>
     <string name="pref_title_device_alias">Device Alias</string>
     <string name="pref_title_gcm_browser_api_key">GCM Browser API Key</string>
     <string name="pref_title_gcm_push_preferences">GCM Push Preferences</string>
@@ -48,7 +48,7 @@
     <string name="pref_title_registration_preferences">Registration Preferences</string>
     <string name="pref_title_variant_secret">Variant Secret</string>
     <string name="pref_title_variant_uuid">Variant UUID</string>
-    <string name="read_file_error">ERROR: %1$s file not found (%2$s). Have you registered with GCM and the back-end successfully? Are you running a debug build? Is the external cache directory accessible?</string>
+    <string name="read_file_error">ERROR: %1$s file not found (%2$s). Have you registered with GCM and PCF Push successfully? Are you running a debug build? Is the external cache directory accessible?</string>
     <string name="received_message">Received: \"%1$s\".</string>
     <string name="received_message_deleted">Received message with type \'MESSAGE_TYPE_DELETED\'.</string>
     <string name="received_message_no_extras">Received message with no extras.</string>
@@ -69,7 +69,7 @@
 
     <string-array name="clear_registrations">
         <item>GCM</item>
-        <item>Back-end</item>
+        <item>PCF Push</item>
         <item>Both</item>
         <item>Cancel</item>
     </string-array>
@@ -83,7 +83,7 @@
 
     <string-array name="send_via_items">
         <item>Via GCM</item>
-        <item>Via Back-End</item>
+        <item>Via PCF Push</item>
         <item>Cancel</item>
     </string-array>
 

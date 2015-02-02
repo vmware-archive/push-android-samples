@@ -19,18 +19,6 @@ import io.pivotal.android.push.registration.RegistrationListener;
 
 public class MainActivity extends ActionBarActivity {
 
-    // Set to your "Project Number" on your Google Cloud project
-    private static final String GCM_SENDER_ID = "420180631899";
-
-    // Set to your "Variant UUID", as provided by the Pivotal CF Mobile Services console
-    private static final String VARIANT_UUID = "152e347a-44ef-4aee-ba20-49da16877fc8";
-
-    // Set to your "Variant Secret" as provided by the Pivotal CF Mobile Services console
-    private static final String VARIANT_SECRET = "05254dc4-7a44-4069-8033-37784e4be8fc";
-
-    // Set to your instance of the Pivotal CF Mobile Services Push server providing your push services.
-    private static final String PUSH_BASE_SERVER_URL = "http://transit-push.cfapps.io";
-
     // Set to your own defined alias for this device.  May not be null.  May be empty.
     private static final String DEVICE_ALIAS = "push-device-alias";
 
@@ -49,11 +37,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
 
-        queueLogMessage("GCM_SENDER_ID: " + GCM_SENDER_ID);
-        queueLogMessage("VARIANT_UUID: " + VARIANT_UUID);
-        queueLogMessage("VARIANT_SECRET: " + VARIANT_SECRET);
         queueLogMessage("DEVICE_ALIAS: " + DEVICE_ALIAS);
-        queueLogMessage("PUSH_BASE_SERVER_URL: " + PUSH_BASE_SERVER_URL);
         queueLogMessage("TAGS: " + TAGS);
         queueLogMessage("Registering for notifications...");
 
@@ -88,11 +72,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void registerForPushNotifications() {
-        final RegistrationParameters parameters = new RegistrationParameters(
-            GCM_SENDER_ID, VARIANT_UUID, VARIANT_SECRET, DEVICE_ALIAS, PUSH_BASE_SERVER_URL, TAGS
-        );
 
-        Push.getInstance(this).startRegistration(parameters, new RegistrationListener() {
+        Push.getInstance(this).startRegistration(DEVICE_ALIAS, TAGS, new RegistrationListener() {
 
             @Override
             public void onRegistrationComplete() {

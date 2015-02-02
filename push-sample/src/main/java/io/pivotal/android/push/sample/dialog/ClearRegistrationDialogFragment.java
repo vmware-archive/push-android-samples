@@ -14,7 +14,7 @@ import io.pivotal.android.push.sample.R;
 public class ClearRegistrationDialogFragment extends DialogFragment {
 
     public static final int CLEAR_REGISTRATIONS_FROM_GCM = 0;
-    public static final int CLEAR_REGISTRATIONS_FROM_BACK_END = 1;
+    public static final int CLEAR_REGISTRATIONS_FROM_PCF_PUSH = 1;
     public static final int CLEAR_REGISTRATIONS_FROM_BOTH = 2;
     public static final int CLEAR_REGISTRATIONS_CANCELLED = 3;
     private Listener listener;
