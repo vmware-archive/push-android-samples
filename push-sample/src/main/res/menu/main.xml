@@ -15,6 +15,11 @@
         app:showAsAction="withText"/>
 
     <item
+        android:id="@+id/action_subscribe_to_tags"
+        android:title="@string/action_subscribe_to_tags"
+        app:showAsAction="withText"/>
+
+    <item
         android:id="@+id/action_unregister"
         android:icon="@drawable/ic_menu_stop"
         android:title="@string/action_unregister"

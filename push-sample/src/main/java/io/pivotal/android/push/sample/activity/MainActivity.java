@@ -13,9 +13,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import io.pivotal.android.push.Push;
 import io.pivotal.android.push.prefs.PushPreferencesProviderImpl;
 import io.pivotal.android.push.registration.RegistrationListener;
+import io.pivotal.android.push.registration.SubscribeToTagsListener;
 import io.pivotal.android.push.registration.UnregistrationListener;
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.dialog.ClearRegistrationDialogFragment;
@@ -81,19 +85,23 @@ public class MainActivity extends LoggingActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case io.pivotal.android.push.sample.R.id.action_register:
+            case R.id.action_register:
                 register();
                 break;
 
-            case io.pivotal.android.push.sample.R.id.action_unregister:
+            case R.id.action_subscribe_to_tags:
+                subscribeToTags();
+                break;
+
+            case R.id.action_unregister:
                 unregister();
                 break;
 
-            case io.pivotal.android.push.sample.R.id.action_clear_registration:
+            case R.id.action_clear_registration:
                 clearRegistration();
                 break;
 
-            case io.pivotal.android.push.sample.R.id.action_send_message:
+            case R.id.action_send_message:
                 sender.sendMessage();
                 break;
 
@@ -124,6 +132,27 @@ public class MainActivity extends LoggingActivity {
         } catch (Exception e) {
             queueLogMessage(e.getLocalizedMessage());
         }
+    }
+
+    private void subscribeToTags() {
+        updateLogRowColour();
+        addLogMessage(R.string.starting_subscribe_to_tags);
+
+        final Set<String> tags = new HashSet<>();
+        tags.add("TAG_1");
+        tags.add("TAG_2");
+
+        push.subscribeToTags(tags, new SubscribeToTagsListener() {
+            @Override
+            public void onSubscribeToTagsComplete() {
+                queueLogMessage(R.string.subscribe_to_tags_successful);
+            }
+
+            @Override
+            public void onSubscribeToTagsFailed(String reason) {
+                queueLogMessage(getString(R.string.subscribe_to_tags_failed) + reason);
+            }
+        });
     }
 
     private void unregister() {
