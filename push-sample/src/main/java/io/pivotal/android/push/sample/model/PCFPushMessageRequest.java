@@ -13,8 +13,11 @@ public class PCFPushMessageRequest {
     @SerializedName("target")
     public PCFPushMessageTarget target;
 
-    public PCFPushMessageRequest(String messageBody, String[] devices) {
+    @SerializedName("tags")
+    public String[] tags;
+
+    public PCFPushMessageRequest(String messageBody, String[] devices, String[] tags) {
         this.message = new PCFPushMessageRequestData(messageBody);
-        this.target = new PCFPushMessageTarget(devices);
+        this.target = new PCFPushMessageTarget(devices, tags);
     }
 }

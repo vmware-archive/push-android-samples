@@ -30,7 +30,7 @@ subprojects {
         defaultConfig {
             versionCode 3
             versionName "1.0.3"
-            minSdkVersion 10
+            minSdkVersion 14
             targetSdkVersion 21
         }
     }

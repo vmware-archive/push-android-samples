@@ -70,6 +70,10 @@
     <string name="unregistration_successful">Unregistration successful.</string>
     <string name="action_subscribe_to_tags">Subscribe to Tags</string>
     <string name="starting_subscribe_to_tags">Starting subscribe to tags&#8230;</string>
+    <string name="subscribe_to_tags_title">Subscribe To Tags</string>
+    <string name="cancel">Cancel</string>
+    <string name="subscribe">Subscribe</string>
+    <string name="send">Send</string>
 
     <string-array name="clear_registrations">
         <item>GCM</item>
@@ -88,7 +92,14 @@
     <string-array name="send_via_items">
         <item>Via GCM</item>
         <item>Via PCF Push</item>
+        <item>Via PCF Push with Tags</item>
         <item>Cancel</item>
     </string-array>
 
+    <string-array name="tags">
+        <item>ALPHA</item>
+        <item>BETA</item>
+        <item>GAMMA</item>
+        <item>DELTA</item>
+    </string-array>
 </resources>

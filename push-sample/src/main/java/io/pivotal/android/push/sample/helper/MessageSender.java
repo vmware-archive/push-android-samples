@@ -18,10 +18,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Set;
 
 import io.pivotal.android.push.prefs.Pivotal;
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.adapter.MessageLogger;
+import io.pivotal.android.push.sample.dialog.SelectTagsDialogFragment;
 import io.pivotal.android.push.sample.dialog.SendMessageDialogFragment;
 import io.pivotal.android.push.sample.model.PCFPushMessageRequest;
 import io.pivotal.android.push.sample.model.GcmMessageRequest;
@@ -36,6 +38,8 @@ public class MessageSender {
     private static final String GCM_REGISTRATION_ID = "gcm_registration_id";
     private static final String AUTHORIZATION = "Authorization";
     private static final String DEVICE_UUID = "device_uuid";
+    private static final String GCM_SEND_MESSAGE_URL = "https://android.googleapis.com/gcm/send";
+    private static final String PCF_PUSH_SEND_MESSAGE_URL = "v1/push";
 
     private final FragmentActivity context;
     private final MessageLogger logger;
@@ -44,9 +48,6 @@ public class MessageSender {
         this.logger = logger;
         this.context = context;
     }
-
-    private static final String GCM_SEND_MESSAGE_URL = "https://android.googleapis.com/gcm/send";
-    private static final String PCF_PUSH_SEND_MESSAGE_URL = "v1/push";
 
     public void sendMessage() {
         if (!DebugUtil.getInstance(context).isDebuggable()) {
@@ -59,12 +60,20 @@ public class MessageSender {
             return;
         }
         final SendMessageDialogFragment.Listener listener = new SendMessageDialogFragment.Listener() {
+
             @Override
             public void onClickResult(int result) {
-                if (result == SendMessageDialogFragment.VIA_GCM) {
-                    sendMessageViaGcm();
-                } else if (result == SendMessageDialogFragment.VIA_PCF_PUSH) {
-                    sendMessageViaPCFPush();
+                switch(result) {
+                    case SendMessageDialogFragment.VIA_GCM:
+                        sendMessageViaGcm();
+                        break;
+                    case SendMessageDialogFragment.VIA_PCF_PUSH:
+                        sendMessageViaPCFPush(null);
+                        break;
+                    case SendMessageDialogFragment.VIA_PCF_PUSH_TAGS:
+                        sendMessageViaPCFPushAndTags();
+                        break;
+                    default:
                 }
             }
         };
@@ -73,9 +82,26 @@ public class MessageSender {
         dialog.show(context.getSupportFragmentManager(), "SendMessageDialogFragment");
     }
 
-    private void sendMessageViaPCFPush() {
+    private void sendMessageViaPCFPushAndTags() {
+        final SelectTagsDialogFragment.Listener listener = new SelectTagsDialogFragment.Listener() {
+
+            @Override
+            public void onClickResult(int result, Set<String> selectedTags) {
+                if (result == SelectTagsDialogFragment.OK) {
+                    sendMessageViaPCFPush(selectedTags);
+                }
+            }
+        };
+
+        final SelectTagsDialogFragment dialog = new SelectTagsDialogFragment();
+        dialog.setPositiveButtonLabelResourceId(R.string.send);
+        dialog.setListener(listener);
+        dialog.show(context.getSupportFragmentManager(), "SelectTagsDialogFragment");
+    }
+
+    private void sendMessageViaPCFPush(Set<String> tags) {
         logger.updateLogRowColour();
-        final String data = getPCFPushMessageRequestString();
+        final String data = getPCFPushMessageRequestString(tags);
         if (data == null) {
             logger.addLogMessage(R.string.need_to_be_registered_error);
             return;
@@ -129,7 +155,7 @@ public class MessageSender {
         final String appUuid = Preferences.getPCFPushAppUuid(context);
         final String apiKey = Preferences.getPCFPushApiKey(context);
         final String stringToEncode = appUuid + ":" + apiKey;
-        return "Basic  " + Base64.encodeToString(stringToEncode.getBytes(), Base64.DEFAULT | Base64.NO_WRAP);
+        return "Basic  " + Base64.encodeToString(stringToEncode.getBytes(), Base64.NO_WRAP);
     }
 
     private void writeConnectionOutput(String requestBodyData, OutputStream outputStream) throws IOException {
@@ -140,14 +166,20 @@ public class MessageSender {
         outputStream.close();
     }
 
-    private String getPCFPushMessageRequestString() {
+    private String getPCFPushMessageRequestString(Set<String> tags) {
         final String device_uuid = readIdFromFile(DEVICE_UUID);
         if (device_uuid == null) {
             return null;
         }
         final String[] devices = new String[]{device_uuid};
         final String messageBody = context.getString(R.string.pcf_message) + logger.getLogTimestamp();
-        final PCFPushMessageRequest messageRequest = new PCFPushMessageRequest(messageBody, devices);
+        final PCFPushMessageRequest messageRequest;
+        if (tags != null) {
+            final String[] tagsArray = tags.toArray(new String[tags.size()]);
+            messageRequest = new PCFPushMessageRequest(messageBody, null, tagsArray);
+        } else {
+            messageRequest = new PCFPushMessageRequest(messageBody, devices, null);
+        }
         final Gson gson = new Gson();
         return gson.toJson(messageRequest);
     }

@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import io.pivotal.android.push.Push;
@@ -23,6 +22,7 @@ import io.pivotal.android.push.registration.SubscribeToTagsListener;
 import io.pivotal.android.push.registration.UnregistrationListener;
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.dialog.ClearRegistrationDialogFragment;
+import io.pivotal.android.push.sample.dialog.SelectTagsDialogFragment;
 import io.pivotal.android.push.sample.helper.MessageSender;
 import io.pivotal.android.push.sample.service.PushService;
 import io.pivotal.android.push.sample.util.Preferences;
@@ -135,24 +135,36 @@ public class MainActivity extends LoggingActivity {
     }
 
     private void subscribeToTags() {
-        updateLogRowColour();
-        addLogMessage(R.string.starting_subscribe_to_tags);
 
-        final Set<String> tags = new HashSet<>();
-        tags.add("TAG_1");
-        tags.add("TAG_2");
-
-        push.subscribeToTags(tags, new SubscribeToTagsListener() {
-            @Override
-            public void onSubscribeToTagsComplete() {
-                queueLogMessage(R.string.subscribe_to_tags_successful);
-            }
+        final SelectTagsDialogFragment.Listener listener = new SelectTagsDialogFragment.Listener() {
 
             @Override
-            public void onSubscribeToTagsFailed(String reason) {
-                queueLogMessage(getString(R.string.subscribe_to_tags_failed) + reason);
+            public void onClickResult(int result, Set<String> selectedTags) {
+                if (result == SelectTagsDialogFragment.OK) {
+                    updateLogRowColour();
+                    addLogMessage(R.string.starting_subscribe_to_tags);
+
+                    Preferences.setSubscribedTags(MainActivity.this, selectedTags);
+
+                    push.subscribeToTags(selectedTags, new SubscribeToTagsListener() {
+                        @Override
+                        public void onSubscribeToTagsComplete() {
+                            queueLogMessage(R.string.subscribe_to_tags_successful);
+                        }
+
+                        @Override
+                        public void onSubscribeToTagsFailed(String reason) {
+                            queueLogMessage(getString(R.string.subscribe_to_tags_failed) + reason);
+                        }
+                    });
+                }
             }
-        });
+        };
+
+        final SelectTagsDialogFragment dialog = new SelectTagsDialogFragment();
+        dialog.setPositiveButtonLabelResourceId(R.string.subscribe);
+        dialog.setListener(listener);
+        dialog.show(getSupportFragmentManager(), "SelectTagsDialogFragment");
     }
 
     private void unregister() {

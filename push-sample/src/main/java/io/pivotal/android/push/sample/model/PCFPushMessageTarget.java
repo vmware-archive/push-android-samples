@@ -10,7 +10,11 @@ public class PCFPushMessageTarget {
     @SerializedName("devices")
     public String[] devices;
 
-    public PCFPushMessageTarget(String[] devices) {
+    @SerializedName("tags")
+    public String[] tags;
+
+    public PCFPushMessageTarget(String[] devices, String[] tags) {
         this.devices = devices;
+        this.tags = tags;
     }
 }
