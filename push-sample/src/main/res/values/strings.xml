@@ -20,7 +20,7 @@
     <string name="clear_pcf_push_device_registration">Clearing device registration from the PCF Push</string>
     <string name="clear_registrations">Clear Registrations</string>
     <string name="clearing_gcm_device_registration">Clearing device registration from GCM</string>
-    <string name="component_versions">"\n\nPivotal CF Mobile Services\ncomponent versions:\n\n  "</string>
+    <string name="component_versions">\n\nPivotal CF Mobile Services\ncomponent versions:\n\n</string>
     <string name="deleted_message_server">Deleted messages on server: %1$s</string>
     <string name="error_reading_file">ERROR reading %1$s file: %2$s</string>
     <string name="external_files_dir_error">ERROR: Was not able to get the externalFilesDir</string>

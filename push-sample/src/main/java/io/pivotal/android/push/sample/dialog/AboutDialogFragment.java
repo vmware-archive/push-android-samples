@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
+import io.pivotal.android.push.Push;
 import io.pivotal.android.push.sample.BuildConfig;
 import io.pivotal.android.push.sample.R;
 
@@ -20,6 +21,6 @@ public class AboutDialogFragment extends DialogFragment {
     }
 
     private String getMessage() {
-        return getString(R.string.application_version) + BuildConfig.VERSION_NAME + getString(R.string.component_versions) + BuildConfig.PUSH_SDK_VERSION;
+        return getString(R.string.application_version) + BuildConfig.VERSION_NAME + getString(R.string.component_versions) + "io.pivotal.android:push:" + Push.getVersion();
     }
 }
