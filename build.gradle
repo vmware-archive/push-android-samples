@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:1.0.1'
     }
 }
 
@@ -18,7 +18,7 @@ subprojects {
 
     ext {
         // Pivotal CF Mobile Services dependencies
-        pushSdk = 'io.pivotal.android:push:1.0.3'
+        pushSdk = 'io.pivotal.android:push:1.0.4'
     }
 
     apply plugin: 'android'
