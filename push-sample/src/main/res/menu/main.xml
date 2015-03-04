@@ -10,6 +10,12 @@
         app:showAsAction="always|withText"/>
 
     <item
+        android:id="@+id/action_geofence"
+        android:icon="@drawable/ic_menu_mapmode"
+        android:title="@string/action_geofence"
+        app:showAsAction="always|withText"/>
+
+    <item
         android:id="@+id/action_send_message"
         android:title="@string/action_send_message"
         app:showAsAction="withText"/>

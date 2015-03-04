@@ -14,7 +14,6 @@ import android.widget.TextView;
 import java.util.Set;
 
 import io.pivotal.android.push.Push;
-import io.pivotal.android.push.RegistrationParameters;
 import io.pivotal.android.push.registration.RegistrationListener;
 
 public class MainActivity extends ActionBarActivity {

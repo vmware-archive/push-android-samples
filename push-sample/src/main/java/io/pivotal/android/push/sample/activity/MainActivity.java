@@ -6,6 +6,7 @@ package io.pivotal.android.push.sample.activity;
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -103,6 +104,10 @@ public class MainActivity extends LoggingActivity {
 
             case R.id.action_send_message:
                 sender.sendMessage();
+                break;
+
+            case R.id.action_geofence:
+                startGeofencesActivity();
                 break;
 
             default:
@@ -214,5 +219,10 @@ public class MainActivity extends LoggingActivity {
         final ClearRegistrationDialogFragment dialog = new ClearRegistrationDialogFragment();
         dialog.setListener(listener);
         dialog.show(getSupportFragmentManager(), "ClearRegistrationDialogFragment");
+    }
+
+    private void startGeofencesActivity() {
+        final Intent intent = new Intent(this, GeofenceActivity.class);
+        startActivity(intent);
     }
 }

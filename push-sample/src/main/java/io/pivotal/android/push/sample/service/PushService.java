@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
@@ -16,6 +17,9 @@ import io.pivotal.android.push.service.GcmService;
 import io.pivotal.android.push.util.Logger;
 
 public class PushService extends GcmService {
+
+    public static final String GEOFENCE_ENTER_BROADCAST = "io.pivotal.android.push.sample.GEOFENCE_ENTER";
+    public static final String GEOFENCE_EXIT_BROADCAST = "io.pivotal.android.push.sample.GEOFENCE_EXIT";
 
     public static final int NOTIFICATION_ID = 1;
 
@@ -48,6 +52,26 @@ public class PushService extends GcmService {
         sendNotification(getString(R.string.send_error, payload.toString()));
     }
 
+    @Override
+    public void onGeofenceEnter(Bundle payload) {
+        Logger.i(getString(R.string.received_geofence_enter));
+        sendNotification(getString(R.string.geofence_entered, payload.toString()));
+
+        final Intent intent = new Intent(GEOFENCE_ENTER_BROADCAST);
+        intent.replaceExtras(payload);
+        sendBroadcast(intent);
+    }
+
+    @Override
+    public void onGeofenceExit(Bundle payload) {
+        Logger.i(getString(R.string.received_geofence_exit));
+        sendNotification(getString(R.string.geofence_exited, payload.toString()));
+
+        final Intent intent = new Intent(GEOFENCE_EXIT_BROADCAST);
+        intent.replaceExtras(payload);
+        sendBroadcast(intent);
+    }
+
     private void sendNotification(String msg) {
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -58,6 +82,7 @@ public class PushService extends GcmService {
             .setSmallIcon(R.drawable.ic_pivotal_logo_2)
             .setContentTitle(getString(R.string.app_name))
             .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
+            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setContentIntent(contentIntent)
             .setContentText(msg);
 

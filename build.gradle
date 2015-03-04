@@ -18,7 +18,7 @@ subprojects {
 
     ext {
         // Pivotal CF Mobile Services dependencies
-        pushSdk = 'io.pivotal.android:push:1.0.4'
+        pushSdk = 'io.pivotal.android:push:1.0.5'
     }
 
     apply plugin: 'android'
