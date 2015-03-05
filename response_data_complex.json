@@ -7,7 +7,7 @@
             "data": {
                 "message": "eating"
             },
-            "expiry_time": 2424309210306,
+            "expiry_time": 2056720182000,
             "trigger_type": "enter",
             "locations": [
                 {
@@ -24,7 +24,7 @@
             "data": {
                 "message": "coding"
             },
-            "expiry_time": 2142744274,
+            "expiry_time": 2056720182000,
             "trigger_type": "enter",
             "locations": [
                 {
@@ -41,7 +41,7 @@
             "data": {
                 "message": "Various Nice Parks"
             },
-            "expiry_time": 2142744274,
+            "expiry_time": 2056720182000,
             "trigger_type": "enter",
             "locations": [
                 {
