@@ -202,7 +202,7 @@ public class GeofenceActivity extends FragmentActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Logger.i("Received some geofences");
+                    Logger.i("Received geofence update.");
                     setUpMap();
                 }
             });
@@ -286,10 +286,12 @@ public class GeofenceActivity extends FragmentActivity {
                 Logger.i(String.format("Setting Mock Location to: %1$s, %2$s", point.latitude, point.longitude));
 
                 for (int i = 0; !isInterrupted() && i <= NUMBER_OF_LOCATION_ITERATIONS; i++) {
-                    mockGpsLocation = createMockLocation(LocationManager.GPS_PROVIDER, point.latitude, point.longitude);
-                    locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, mockGpsLocation);
-                    mockNetworkLocation = createMockLocation(LocationManager.NETWORK_PROVIDER, point.latitude, point.longitude);
-                    locationManager.setTestProviderLocation(LocationManager.NETWORK_PROVIDER, mockNetworkLocation);
+                    if (locationManager != null) {
+                        mockGpsLocation = createMockLocation(LocationManager.GPS_PROVIDER, point.latitude, point.longitude);
+                        locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, mockGpsLocation);
+                        mockNetworkLocation = createMockLocation(LocationManager.NETWORK_PROVIDER, point.latitude, point.longitude);
+                        locationManager.setTestProviderLocation(LocationManager.NETWORK_PROVIDER, mockNetworkLocation);
+                    }
                     Thread.sleep(LOCATION_ITERATION_PAUSE_TIME);
                 }
             } catch (InterruptedException e) {
