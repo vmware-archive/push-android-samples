@@ -55,7 +55,7 @@ public class PushService extends GcmService {
     @Override
     public void onGeofenceEnter(Bundle payload) {
         Logger.i(getString(R.string.received_geofence_enter));
-        sendNotification(getString(R.string.geofence_entered, payload.toString()));
+        sendNotification(getString(R.string.geofence_entered, payload.getString("message")));
 
         final Intent intent = new Intent(GEOFENCE_ENTER_BROADCAST);
         intent.replaceExtras(payload);
@@ -65,7 +65,7 @@ public class PushService extends GcmService {
     @Override
     public void onGeofenceExit(Bundle payload) {
         Logger.i(getString(R.string.received_geofence_exit));
-        sendNotification(getString(R.string.geofence_exited, payload.toString()));
+        sendNotification(getString(R.string.geofence_exited, payload.getString("message")));
 
         final Intent intent = new Intent(GEOFENCE_EXIT_BROADCAST);
         intent.replaceExtras(payload);

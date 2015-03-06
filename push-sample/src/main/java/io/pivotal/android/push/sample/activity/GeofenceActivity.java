@@ -216,7 +216,7 @@ public class GeofenceActivity extends FragmentActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(GeofenceActivity.this, getString(R.string.geofence_entered, intent.toString()), Toast.LENGTH_LONG).show();
+                    Toast.makeText(GeofenceActivity.this, getString(R.string.geofence_entered, intent.getStringExtra("message")), Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -228,7 +228,7 @@ public class GeofenceActivity extends FragmentActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(GeofenceActivity.this, getString(R.string.geofence_exited, intent.toString()), Toast.LENGTH_LONG).show();
+                    Toast.makeText(GeofenceActivity.this, getString(R.string.geofence_exited, intent.getStringExtra("message")), Toast.LENGTH_LONG).show();
                 }
             });
         }
