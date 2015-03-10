@@ -38,6 +38,7 @@ public class MainActivity extends LoggingActivity {
     private static final String DEVICE_ALIAS = "device_alias";
     private static final String BACKEND_DEVICE_REGISTRATION_ID = "backend_device_registration_id";
     private static final String BASE_SERVER_URL = "base_server_url";
+    private static final String GEOFENCE_UPDATE = "geofence_update";
 
     private Push push;
     private MessageSender sender;
@@ -211,6 +212,7 @@ public class MainActivity extends LoggingActivity {
                         editor.remove(DEVICE_ALIAS);
                         editor.remove(BACKEND_DEVICE_REGISTRATION_ID);
                         editor.remove(BASE_SERVER_URL);
+                        editor.remove(GEOFENCE_UPDATE);
                     }
                     editor.commit();
                 }
