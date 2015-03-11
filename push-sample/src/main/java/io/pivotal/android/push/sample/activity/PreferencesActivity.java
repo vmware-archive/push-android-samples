@@ -14,10 +14,11 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NavUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +40,33 @@ public class PreferencesActivity extends PreferenceActivity {
         addPreferencesFromResource(getPreferencesXmlResourceId());
         addPreferences(getPreferenceNames());
         preferenceChangeListener = getPreferenceChangeListener();
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        final LinearLayout root = (LinearLayout)findViewById(android.R.id.list).getParent().getParent().getParent();
+        final Toolbar bar = (Toolbar) LayoutInflater.from(this).inflate(R.layout.activity_preferences_toolbar, root, false);
+        root.addView(bar, 0); // insert at top
+        bar.inflateMenu(R.menu.preferences);
+        bar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        bar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.action_reset_preferences) {
+                    resetPreferencesToDefault();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     protected String[] getPreferenceNames() {
@@ -114,25 +142,6 @@ public class PreferencesActivity extends PreferenceActivity {
 
     private void setupCheckBoxPreference(CheckBoxPreference preference, boolean value) {
         preference.setChecked(value);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        final MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.preferences, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
-            return true;
-        } else if (id == R.id.action_reset_preferences) {
-            resetPreferencesToDefault();
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressLint("CommitPrefEdits")
