@@ -31,8 +31,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import io.pivotal.android.push.geofence.GeofenceRegistrar;
@@ -44,6 +47,7 @@ public class GeofenceActivity extends FragmentActivity {
 
     private static final long LOCATION_ITERATION_PAUSE_TIME = 1000L;
     private static final int NUMBER_OF_LOCATION_ITERATIONS = 10;
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm aa", Locale.getDefault());
 
     private GoogleMap map; // Might be null if Google Play services APK is not available.
     private LatLngBounds latLngBounds = null;
@@ -124,7 +128,6 @@ public class GeofenceActivity extends FragmentActivity {
             addGeofences(geofences, builder);
             latLngBounds = builder.build();
         }
-
     }
 
     private void addGeofences(List<Map<String, String>> geofences, LatLngBounds.Builder builder) {
@@ -134,6 +137,7 @@ public class GeofenceActivity extends FragmentActivity {
                 final double longitude = Double.parseDouble(geofence.get("long"));
                 final float radius = Float.parseFloat(geofence.get("rad"));
                 final String name = geofence.get("name");
+                final Date expiry = new Date(Long.parseLong(geofence.get("expiry")));
                 final LatLng point = new LatLng(latitude, longitude);
 
                 builder.include(point);
@@ -147,7 +151,8 @@ public class GeofenceActivity extends FragmentActivity {
                         .alpha(0.5f)
                         .position(point)
                         .draggable(false)
-                        .title(name);
+                        .title(name)
+                        .snippet("Expires " + dateFormat.format(expiry));
                 map.addMarker(markerOptions);
                 map.addCircle(circleOptions);
             }
