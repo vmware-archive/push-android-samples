@@ -116,7 +116,7 @@ public class MessageSender {
                 OutputStream outputStream = null;
 
                 try {
-                    final URL url = new URL(Pivotal.getServiceUrl() + "/" + PCF_PUSH_SEND_MESSAGE_URL);
+                    final URL url = new URL(Pivotal.getServiceUrl(context) + "/" + PCF_PUSH_SEND_MESSAGE_URL);
                     final HttpURLConnection urlConnection = getUrlConnection(url);
                     urlConnection.setDoOutput(true);
                     urlConnection.addRequestProperty(AUTHORIZATION, getBasicAuthorizationValue());
