@@ -39,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import io.pivotal.android.push.geofence.GeofenceRegistrar;
+import io.pivotal.android.push.prefs.Pivotal;
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.service.PushService;
 import io.pivotal.android.push.util.Logger;
@@ -100,6 +101,7 @@ public class GeofenceActivity extends FragmentActivity {
         locationManager.removeTestProvider(LocationManager.NETWORK_PROVIDER);
         locationManager = null;
         updateLocationRunnable = null;
+        map = null;
     }
 
     private void setUpMapIfNeeded() {
@@ -122,11 +124,15 @@ public class GeofenceActivity extends FragmentActivity {
         map.setOnMapLoadedCallback(onMapLoadedCallback);
         map.setOnMapClickListener(onMapClickListener);
         map.clear();
-        final List<Map<String, String>> geofences = loadGeofences();
-        final LatLngBounds.Builder builder = LatLngBounds.builder();
-        if (geofences != null && !geofences.isEmpty()) {
-            addGeofences(geofences, builder);
-            latLngBounds = builder.build();
+        if (Pivotal.getGeofencesEnabled(this)) {
+            final List<Map<String, String>> geofences = loadGeofences();
+            final LatLngBounds.Builder builder = LatLngBounds.builder();
+            if (geofences != null && !geofences.isEmpty()) {
+                addGeofences(geofences, builder);
+                latLngBounds = builder.build();
+            }
+        } else {
+            Toast.makeText(this, "Note that geofences are currently disabled.", Toast.LENGTH_SHORT).show();
         }
     }
 
