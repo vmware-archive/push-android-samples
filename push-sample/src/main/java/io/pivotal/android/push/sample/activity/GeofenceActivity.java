@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import io.pivotal.android.push.geofence.GeofenceRegistrar;
+import io.pivotal.android.push.Push;
 import io.pivotal.android.push.prefs.Pivotal;
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.service.PushService;
@@ -68,20 +68,26 @@ public class GeofenceActivity extends FragmentActivity {
         super.onResume();
         setUpMapIfNeeded();
 
-        registerReceiver(geofenceUpdateBroadcastReceiver, new IntentFilter(GeofenceRegistrar.GEOFENCE_UPDATE_BROADCAST));
+        registerReceiver(geofenceUpdateBroadcastReceiver, new IntentFilter(Push.GEOFENCE_UPDATE_BROADCAST));
         registerReceiver(geofenceEnterBroadcastReceiver, new IntentFilter(PushService.GEOFENCE_ENTER_BROADCAST));
         registerReceiver(geofenceExitBroadcastReceiver, new IntentFilter(PushService.GEOFENCE_EXIT_BROADCAST));
 
         Logger.i("Setup mock location providers");
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        Logger.i("GPS provider");
-        locationManager.addTestProvider(LocationManager.GPS_PROVIDER, false, true, false, false, false, false, false, Criteria.POWER_HIGH, Criteria.ACCURACY_FINE);
-        locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
+        try {
+            Logger.i("GPS provider");
+            locationManager.addTestProvider(LocationManager.GPS_PROVIDER, false, true, false, false, false, false, false, Criteria.POWER_HIGH, Criteria.ACCURACY_FINE);
+            locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
 
-        Logger.i("Network provider");
-        locationManager.addTestProvider(LocationManager.NETWORK_PROVIDER, true, false, true, false, false, false, false, Criteria.POWER_MEDIUM, Criteria.ACCURACY_FINE);
-        locationManager.setTestProviderEnabled(LocationManager.NETWORK_PROVIDER, true);
+            Logger.i("Network provider");
+            locationManager.addTestProvider(LocationManager.NETWORK_PROVIDER, true, false, true, false, false, false, false, Criteria.POWER_MEDIUM, Criteria.ACCURACY_FINE);
+            locationManager.setTestProviderEnabled(LocationManager.NETWORK_PROVIDER, true);
+
+        } catch (Exception e) {
+            Toast.makeText(this, getString(R.string.error_making_test_providers) + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            Logger.ex("Error setting up test location provider", e);
+        }
     }
 
     @Override
@@ -96,9 +102,13 @@ public class GeofenceActivity extends FragmentActivity {
             updateLocationRunnable.interrupt();
         }
 
-        Logger.i("Cleanup our fields");
-        locationManager.removeTestProvider(LocationManager.GPS_PROVIDER);
-        locationManager.removeTestProvider(LocationManager.NETWORK_PROVIDER);
+        try {
+            locationManager.removeTestProvider(LocationManager.GPS_PROVIDER);
+            locationManager.removeTestProvider(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception e) {
+            Logger.ex("Error removing test location providers", e);
+        }
+
         locationManager = null;
         updateLocationRunnable = null;
         map = null;

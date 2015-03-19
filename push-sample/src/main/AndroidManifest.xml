@@ -48,13 +48,26 @@
         </receiver>
         <!-- =============================================================================================== -->
 
-
         <!-- =============================================================================================== -->
         <!-- You must add your push service to your manifest in order to receive notification updates -->
         <service
             android:name=".service.PushService"
             android:exported="false" />
         <!-- =============================================================================================== -->
+
+        <!-- =============================================================================================== -->
+        <!-- You may add this receiver if you want to receive status updates when the SDK monitors geofences -->
+        <!-- This receiver is the only way to receive error updates (as they happen) from the geofence       -->
+        <!-- setup system in this SDK.                                                                       -->
+        <receiver
+            android:name=".receiver.GeofenceUpdateBroadcastReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="io.pivotal.android.push.geofence.UPDATE"/>
+            </intent-filter>
+        </receiver>
+        <!-- =============================================================================================== -->
+
 
         <activity
             android:name=".activity.MainActivity"

@@ -25,7 +25,6 @@ import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.dialog.ClearRegistrationDialogFragment;
 import io.pivotal.android.push.sample.dialog.SelectTagsDialogFragment;
 import io.pivotal.android.push.sample.helper.MessageSender;
-import io.pivotal.android.push.sample.service.PushService;
 import io.pivotal.android.push.sample.util.Preferences;
 
 public class MainActivity extends LoggingActivity {
@@ -73,7 +72,7 @@ public class MainActivity extends LoggingActivity {
 
     private void clearNotifications() {
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(PushService.NOTIFICATION_ID);
+        notificationManager.cancelAll();
     }
 
     @Override

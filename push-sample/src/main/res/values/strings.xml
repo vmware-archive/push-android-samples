@@ -102,10 +102,12 @@
         <item>GAMMA</item>
         <item>DELTA</item>
     </string-array>
+
     <string name="title_activity_geofence">Geofences</string>
     <string name="action_geofence">Geofences</string>
     <string name="received_geofence_enter">Entered geofence.</string>
     <string name="received_geofence_exit">Exited geofence.</string>
     <string name="geofence_entered">Entered geofence: %1$s</string>
     <string name="geofence_exited">Exited geofence: %1$s</string>
+    <string name="error_making_test_providers">"Error setting up test location providers: "</string>
 </resources>

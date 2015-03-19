@@ -21,41 +21,51 @@ public class PushService extends GcmService {
     public static final String GEOFENCE_ENTER_BROADCAST = "io.pivotal.android.push.sample.GEOFENCE_ENTER";
     public static final String GEOFENCE_EXIT_BROADCAST = "io.pivotal.android.push.sample.GEOFENCE_EXIT";
 
-    public static final int NOTIFICATION_ID = 1;
-
+    private static final int NOTIFICATION_ID = 1;
     private static final int NOTIFICATION_LIGHTS_COLOUR = 0xff008981;
     private static final int NOTIFICATION_LIGHTS_ON_MS = 500;
     private static final int NOTIFICATION_LIGHTS_OFF_MS = 1000;
     private static final String MESSAGE = "message";
+    private static final String GEOFENCE_ID = "PCF_GEOFENCE_ID";
 
     @Override
     public void onReceiveMessage(Bundle payload) {
-        String message;
+        final String message;
         if (payload.containsKey(MESSAGE)) {
             message = getString(R.string.received_message, payload.getString(MESSAGE));
         } else {
             message = getString(R.string.received_message_no_extras);
         }
         Logger.i(message);
-        sendNotification(message);
+        sendNotification(getTag(payload), message);
+    }
+
+    private String getTag(Bundle payload) {
+        final String tag;
+        if (payload.containsKey(GEOFENCE_ID)) {
+            tag = payload.getString(GEOFENCE_ID);
+        } else {
+            tag = "TAG";
+        }
+        return tag;
     }
 
     @Override
     public void onReceiveMessageDeleted(Bundle payload) {
         Logger.i(getString(R.string.received_message_deleted));
-        sendNotification(getString(R.string.deleted_message_server, payload.toString()));
+        sendNotification(getTag(payload), getString(R.string.deleted_message_server, payload.toString()));
     }
 
     @Override
     public void onReceiveMessageSendError(Bundle payload) {
         Logger.i(getString(R.string.received_message_send_error));
-        sendNotification(getString(R.string.send_error, payload.toString()));
+        sendNotification(getTag(payload), getString(R.string.send_error, payload.toString()));
     }
 
     @Override
     public void onGeofenceEnter(Bundle payload) {
         Logger.i(getString(R.string.received_geofence_enter));
-        sendNotification(getString(R.string.geofence_entered, payload.getString("message")));
+        sendNotification(getTag(payload), getString(R.string.geofence_entered, payload.getString("message")));
 
         final Intent intent = new Intent(GEOFENCE_ENTER_BROADCAST);
         intent.replaceExtras(payload);
@@ -65,14 +75,14 @@ public class PushService extends GcmService {
     @Override
     public void onGeofenceExit(Bundle payload) {
         Logger.i(getString(R.string.received_geofence_exit));
-        sendNotification(getString(R.string.geofence_exited, payload.getString("message")));
+        sendNotification(getTag(payload), getString(R.string.geofence_exited, payload.getString("message")));
 
         final Intent intent = new Intent(GEOFENCE_EXIT_BROADCAST);
         intent.replaceExtras(payload);
         sendBroadcast(intent);
     }
 
-    private void sendNotification(String msg) {
+    private void sendNotification(String tag, String msg) {
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         final PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
@@ -86,6 +96,6 @@ public class PushService extends GcmService {
             .setContentIntent(contentIntent)
             .setContentText(msg);
 
-        notificationManager.notify(NOTIFICATION_ID, builder.build());
+        notificationManager.notify(tag, NOTIFICATION_ID, builder.build());
     }
 }

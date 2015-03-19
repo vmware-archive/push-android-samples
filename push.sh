@@ -11,7 +11,7 @@ DEVICEID=`cat device_uuid.txt`
 
 UPDATE_JSON=`jq '.|tostring' < ${RESPONSE_DATA_JSON}`
 
-http -a ${APPUUID}:${APPKEY} http://them-pirates.cfapps.io/v1/push <<HTTPBODY
+http -v -a ${APPUUID}:${APPKEY} http://them-pirates.cfapps.io/v1/push <<HTTPBODY
   {"message":
     {"body":"hello rob!",
       "custom":
