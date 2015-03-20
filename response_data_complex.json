@@ -9,7 +9,6 @@
             },
             "expiry_time": 2056720182000,
             "trigger_type": "enter",
-            "tags":["ALPHA","BETA"],
             "locations": [
                 {
                     "id": 88,
@@ -43,7 +42,6 @@
                 "message": "Various Nice Parks"
             },
             "expiry_time": 2056720182000,
-            "tags":["DELTA","BETA"],
             "trigger_type": "enter",
             "locations": [
                 {
