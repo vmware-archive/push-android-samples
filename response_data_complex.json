@@ -25,7 +25,7 @@
                 "message": "coding"
             },
             "expiry_time": 2056720182000,
-            "trigger_type": "enter",
+            "trigger_type": "exit",
             "locations": [
                 {
                     "id": 66,
