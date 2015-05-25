@@ -5,7 +5,7 @@
         {
             "id": 44,
             "data": {
-                "message": "More Park"
+                "android":{"message": "More Park"}
             },
             "trigger_type": "exit",
             "expiry_time": 2056720182000,
