@@ -53,6 +53,8 @@ public class GeofenceActivity extends FragmentActivity {
     private static final long LOCATION_ITERATION_PAUSE_TIME = 1000L;
     private static final int NUMBER_OF_LOCATION_ITERATIONS = 10;
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm aa", Locale.getDefault());
+    private static final double METERS_PER_DEGREE_LATITUDE = 111131.74;
+    private static final double LATITUDE_PADDING = 1.5;
 
     private GoogleMap map; // Might be null if Google Play services APK is not available.
     private LatLngBounds latLngBounds = null;
@@ -60,11 +62,13 @@ public class GeofenceActivity extends FragmentActivity {
     private LocationManager locationManager;
     private Marker locationMarker;
     private ScheduledExecutorService scheduler;
+    private int currentlyDisplayedGeofences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_geofence);
+        currentlyDisplayedGeofences = 0;
     }
 
     @Override
@@ -148,9 +152,12 @@ public class GeofenceActivity extends FragmentActivity {
             final List<Map<String, String>> geofences = loadGeofences();
             final LatLngBounds.Builder builder = LatLngBounds.builder();
             if (geofences != null && !geofences.isEmpty()) {
+                currentlyDisplayedGeofences = geofences.size();
                 addGeofences(geofences, builder);
                 setupExpiryAlarm(geofences);
                 latLngBounds = builder.build();
+            } else {
+                currentlyDisplayedGeofences = 0;
             }
         } else {
             Toast.makeText(this, "Note that geofences are currently disabled.", Toast.LENGTH_SHORT).show();
@@ -168,6 +175,10 @@ public class GeofenceActivity extends FragmentActivity {
                 final LatLng point = new LatLng(latitude, longitude);
 
                 builder.include(point);
+                builder.include(new LatLng(point.latitude - radius * LATITUDE_PADDING / METERS_PER_DEGREE_LATITUDE, point.longitude));
+                builder.include(new LatLng(point.latitude + radius * LATITUDE_PADDING / METERS_PER_DEGREE_LATITUDE, point.longitude));
+                builder.include(new LatLng(point.latitude, point.longitude - radius / METERS_PER_DEGREE_LATITUDE));
+                builder.include(new LatLng(point.latitude, point.longitude + radius / METERS_PER_DEGREE_LATITUDE));
 
                 final CircleOptions circleOptions = new CircleOptions()
                         .center(point)
@@ -324,7 +335,11 @@ public class GeofenceActivity extends FragmentActivity {
         @Override
         public void onMapLoaded() {
             if (map != null && latLngBounds != null) {
-                map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 80));
+                if (currentlyDisplayedGeofences > 0) {
+                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 80));
+                } else {
+                    map.animateCamera(CameraUpdateFactory.zoomBy(-1.5f));
+                }
             }
         }
     };
