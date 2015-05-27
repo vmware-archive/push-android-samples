@@ -47,7 +47,7 @@
                 "android":{"message":"Various nice parks here!"}
             },
             "expiry_time": 2056720182000,
-            "tags":["GAMMA", "OMEGA"],
+            "tags":["GAMMA", "DELTA"],
             "trigger_type": "enter",
             "locations": [
                 {

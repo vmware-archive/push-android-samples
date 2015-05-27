@@ -2,8 +2,8 @@
 APPUUID=fddb5fd2-85af-45a6-b828-9efaa66f019c
 APPKEY=25eb569a-750a-4c3f-9e7b-75be9097dd2b
 #RESPONSE_DATA_JSON=response_data_delete_all.json
-RESPONSE_DATA_JSON=response_data_overlap.json
-#RESPONSE_DATA_JSON=response_data_tags.json
+#RESPONSE_DATA_JSON=response_data_overlap.json
+RESPONSE_DATA_JSON=response_data_tags.json
 #RESPONSE_DATA_JSON=response_data_complex.json
 #RESPONSE_DATA_JSON=response_data_one_item.json
 
