@@ -8,11 +8,13 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.Set;
 
@@ -223,7 +225,12 @@ public class MainActivity extends LoggingActivity {
     }
 
     private void startGeofencesActivity() {
-        final Intent intent = new Intent(this, GeofenceActivity.class);
-        startActivity(intent);
+        final int accessGpsPermission = checkCallingOrSelfPermission("android.permission.ACCESS_FINE_LOCATION");
+        if (accessGpsPermission == PackageManager.PERMISSION_GRANTED) {
+            final Intent intent = new Intent(this, GeofenceActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Android permission ACCESS_FINE_LOCATION required to use the map activity.", Toast.LENGTH_LONG).show();
+        }
     }
 }
