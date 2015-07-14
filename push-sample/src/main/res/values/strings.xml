@@ -56,7 +56,7 @@
     <string name="registration_failed">"Registration failed. Reason is: "</string>
     <string name="registration_instructions">Press the \"Register\" button to attempt registration.</string>
     <string name="registration_params">GCM Sender ID: \'%1$s\'\nVariant UUID: \'%2$s\nVariant Secret: \'%3$s\'\nDevice Alias: \'%4$s\'\nBase Server URL: \'%5$s\'.</string>
-    <string name="registration_successful">Registration successful.</string>
+    <string name="registration_successful">Registration successful. The device UUID is:</string>
     <string name="subscribe_to_tags_successful">Successfully subscribed to tags.</string>
     <string name="subscribe_to_tags_failed">"Failed to subscribe to tags: "</string>
     <string name="release_build_error">This feature does not work in release builds.</string>

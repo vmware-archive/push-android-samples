@@ -128,7 +128,7 @@ public class MainActivity extends LoggingActivity {
 
                 @Override
                 public void onRegistrationComplete() {
-                    queueLogMessage(R.string.registration_successful);
+                    queueLogMessage(getString(R.string.registration_successful) + " " + push.getDeviceUuid());
                 }
 
                 @Override
