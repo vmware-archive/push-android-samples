@@ -10,6 +10,9 @@
     <!-- You are free to set this parameter to whatever you like.  It is used during the registration process.       -->
     <string name="pref_default_device_alias">push-sample-alias</string>
 
+    <!-- Are geofences enabled in the sample app by default?  True or false.                                         -->
+    <bool name="pref_default_are_geofences_enabled">true</bool>
+
     <!-- This parameter is only required if you want to push messages via GCM in the sample app, though you may      -->
     <!-- also have to provide it in your "variant" in the Pivotal CF Mobile Services Push Server admin console.      -->
     <string name="pref_default_gcm_browser_api_key">AIzaSyAPmTRn9cmlR7NNHMW6S37iSvDDPV4xawk</string>

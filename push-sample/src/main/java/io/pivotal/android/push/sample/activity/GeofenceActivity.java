@@ -43,9 +43,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import io.pivotal.android.push.Push;
-import io.pivotal.android.push.prefs.Pivotal;
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.service.PushService;
+import io.pivotal.android.push.sample.util.Preferences;
 import io.pivotal.android.push.util.Logger;
 
 public class GeofenceActivity extends FragmentActivity {
@@ -148,7 +148,7 @@ public class GeofenceActivity extends FragmentActivity {
         map.setOnMapLoadedCallback(onMapLoadedCallback);
         map.setOnMapClickListener(onMapClickListener);
         map.clear();
-        if (Pivotal.getGeofencesEnabled(this)) {
+        if (Preferences.getAreGeofencesEnabled(this)) {
             final List<Map<String, String>> geofences = loadGeofences();
             final LatLngBounds.Builder builder = LatLngBounds.builder();
             if (geofences != null && !geofences.isEmpty()) {

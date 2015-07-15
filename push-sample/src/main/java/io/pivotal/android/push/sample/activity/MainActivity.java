@@ -123,8 +123,14 @@ public class MainActivity extends LoggingActivity {
         addLogMessage(R.string.starting_registration);
 
         try {
-            // TODO - find a way to let the user supply tags
-            push.startRegistration(Preferences.getDeviceAlias(this), null, new RegistrationListener() {
+
+            final Set<String> subscribedTags = Preferences.getSubscribedTags(this);
+            final String deviceAlias = Preferences.getDeviceAlias(this);
+            final boolean areGeofencesEnabled = Preferences.getAreGeofencesEnabled(this);
+
+            addLogMessage("subscribedTags:" + subscribedTags + " deviceAlias:" + deviceAlias + " areGeofencesEnabled:" + areGeofencesEnabled);
+
+            push.startRegistration(deviceAlias, subscribedTags, areGeofencesEnabled, new RegistrationListener() {
 
                 @Override
                 public void onRegistrationComplete() {

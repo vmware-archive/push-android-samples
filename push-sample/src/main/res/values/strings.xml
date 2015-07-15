@@ -110,4 +110,5 @@
     <string name="geofence_entered">Entered geofence: %1$s</string>
     <string name="geofence_exited">Exited geofence: %1$s</string>
     <string name="error_making_test_providers">"Error setting up test location providers: "</string>
+    <string name="pref_title_are_geofences_enabled">Geofences Enabled</string>
 </resources>

@@ -13,6 +13,12 @@
             android:singleLine="true"
             android:maxLines="1"/>
 
+        <CheckBoxPreference
+            android:key="test_are_geofences_enabled"
+            android:title="@string/pref_title_are_geofences_enabled"
+            android:defaultValue="@bool/pref_default_are_geofences_enabled"
+            android:persistent="true"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory

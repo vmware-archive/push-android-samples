@@ -24,6 +24,9 @@ public class MainActivity extends ActionBarActivity {
     // Set to the list of tags you'd like to subscribe to.  May be empty or null.
     private static final Set<String> TAGS = null;
 
+    // Set areGeofencesEnabled. Default is true.
+    private static final boolean ARE_GEOFENCES_ENABLED = true;
+
     private BroadcastReceiver messageBroadcastReceiver = null;
 
     @Override
@@ -72,7 +75,7 @@ public class MainActivity extends ActionBarActivity {
 
     private void registerForPushNotifications() {
 
-        Push.getInstance(this).startRegistration(DEVICE_ALIAS, TAGS, new RegistrationListener() {
+        Push.getInstance(this).startRegistration(DEVICE_ALIAS, TAGS, ARE_GEOFENCES_ENABLED, new RegistrationListener() {
 
             @Override
             public void onRegistrationComplete() {
