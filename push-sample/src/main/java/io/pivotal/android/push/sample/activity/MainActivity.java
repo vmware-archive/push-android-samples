@@ -61,7 +61,13 @@ public class MainActivity extends LoggingActivity {
         updateLogRowColour();
         clearNotifications();
         setup();
+
+        final Intent i = getIntent();
+        if (i.getAction().equals("io.pivotal.android.push.sample.notification")) {
+            Push.getInstance(this).logOpenedNotification(i.getExtras());
+        }
     }
+
 
     protected Class<? extends PreferencesActivity> getPreferencesActivity() {
         return PreferencesActivity.class;

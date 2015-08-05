@@ -37,7 +37,7 @@ public class PushService extends GcmService {
             message = getString(R.string.received_message_no_extras);
         }
         Logger.i(message);
-        sendNotification(getTag(payload), message);
+        sendNotification(getTag(payload), message, payload);
     }
 
     private String getTag(Bundle payload) {
@@ -53,19 +53,19 @@ public class PushService extends GcmService {
     @Override
     public void onReceiveMessageDeleted(Bundle payload) {
         Logger.i(getString(R.string.received_message_deleted));
-        sendNotification(getTag(payload), getString(R.string.deleted_message_server, payload.toString()));
+        sendNotification(getTag(payload), getString(R.string.deleted_message_server, payload.toString()), payload);
     }
 
     @Override
     public void onReceiveMessageSendError(Bundle payload) {
         Logger.i(getString(R.string.received_message_send_error));
-        sendNotification(getTag(payload), getString(R.string.send_error, payload.toString()));
+        sendNotification(getTag(payload), getString(R.string.send_error, payload.toString()), payload);
     }
 
     @Override
     public void onGeofenceEnter(Bundle payload) {
         Logger.i(getString(R.string.received_geofence_enter));
-        sendNotification(getTag(payload), getString(R.string.geofence_entered, payload.getString("message")));
+        sendNotification(getTag(payload), getString(R.string.geofence_entered, payload.getString("message")), payload);
 
         final Intent intent = new Intent(GEOFENCE_ENTER_BROADCAST);
         intent.replaceExtras(payload);
@@ -75,17 +75,20 @@ public class PushService extends GcmService {
     @Override
     public void onGeofenceExit(Bundle payload) {
         Logger.i(getString(R.string.received_geofence_exit));
-        sendNotification(getTag(payload), getString(R.string.geofence_exited, payload.getString("message")));
+        sendNotification(getTag(payload), getString(R.string.geofence_exited, payload.getString("message")), payload);
 
         final Intent intent = new Intent(GEOFENCE_EXIT_BROADCAST);
         intent.replaceExtras(payload);
         sendBroadcast(intent);
     }
 
-    private void sendNotification(String tag, String msg) {
+    private void sendNotification(String tag, String msg, Bundle payload) {
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        final PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+        final Intent intent = new Intent(this, MainActivity.class);
+        intent.setAction("io.pivotal.android.push.sample.notification");
+        intent.putExtras(payload);
+        final PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
             .setLights(NOTIFICATION_LIGHTS_COLOUR, NOTIFICATION_LIGHTS_ON_MS, NOTIFICATION_LIGHTS_OFF_MS)
