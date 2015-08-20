@@ -27,6 +27,7 @@ import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.dialog.ClearRegistrationDialogFragment;
 import io.pivotal.android.push.sample.dialog.SelectTagsDialogFragment;
 import io.pivotal.android.push.sample.helper.MessageSender;
+import io.pivotal.android.push.sample.service.PushService;
 import io.pivotal.android.push.sample.util.Preferences;
 
 public class MainActivity extends LoggingActivity {
@@ -61,6 +62,11 @@ public class MainActivity extends LoggingActivity {
         updateLogRowColour();
         clearNotifications();
         setup();
+
+        final Intent i = getIntent();
+        if (i.getAction().equals(PushService.NOTIFICATION_ACTION)) {
+            Push.getInstance(this).logOpenedNotification(i.getExtras());
+        }
     }
 
     protected Class<? extends PreferencesActivity> getPreferencesActivity() {
