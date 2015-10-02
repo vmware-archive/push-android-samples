@@ -17,12 +17,14 @@ public class Preferences {
     public static final String PCF_PUSH_APP_UUID = "test_pcf_app_uuid";
     public static final String PCF_PUSH_API_KEY = "test_pcf_api_key";
     public static final String SUBSCRIBED_TAGS = "test_subscribed_tags";
+    public static final String ARE_GEOFENCES_ENABLED = "test_are_geofences_enabled";
 
     public static final String[] PREFERENCE_NAMES = {
             DEVICE_ALIAS,
             GCM_BROWSER_API_KEY,
             PCF_PUSH_APP_UUID,
-            PCF_PUSH_API_KEY
+            PCF_PUSH_API_KEY,
+            ARE_GEOFENCES_ENABLED
     };
 
     public static String getDeviceAlias(Context context) {
@@ -39,6 +41,10 @@ public class Preferences {
 
     public static String getPCFPushApiKey(Context context) {
         return getSharedPreferences(context).getString(PCF_PUSH_API_KEY, null);
+    }
+
+    public static boolean getAreGeofencesEnabled(Context context) {
+        return getSharedPreferences(context).getBoolean(ARE_GEOFENCES_ENABLED, false);
     }
 
     public static Set<String> getSubscribedTags(Context context) {

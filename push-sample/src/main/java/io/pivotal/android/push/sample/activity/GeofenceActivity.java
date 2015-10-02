@@ -37,11 +37,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import io.pivotal.android.push.Push;
-import io.pivotal.android.push.prefs.Pivotal;
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.service.PushService;
+import io.pivotal.android.push.sample.util.Preferences;
 import io.pivotal.android.push.util.Logger;
 
 public class GeofenceActivity extends FragmentActivity {
@@ -49,23 +53,28 @@ public class GeofenceActivity extends FragmentActivity {
     private static final long LOCATION_ITERATION_PAUSE_TIME = 1000L;
     private static final int NUMBER_OF_LOCATION_ITERATIONS = 10;
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm aa", Locale.getDefault());
+    private static final double METERS_PER_DEGREE_LATITUDE = 111131.74;
+    private static final double LATITUDE_PADDING = 1.5;
 
     private GoogleMap map; // Might be null if Google Play services APK is not available.
     private LatLngBounds latLngBounds = null;
     private UpdateLocationRunnable updateLocationRunnable;
     private LocationManager locationManager;
     private Marker locationMarker;
+    private ScheduledExecutorService scheduler;
+    private int currentlyDisplayedGeofences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_geofence);
-        setUpMapIfNeeded();
+        currentlyDisplayedGeofences = 0;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
         setUpMapIfNeeded();
 
         registerReceiver(geofenceUpdateBroadcastReceiver, new IntentFilter(Push.GEOFENCE_UPDATE_BROADCAST));
@@ -93,6 +102,11 @@ public class GeofenceActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+        if (scheduler != null) {
+            scheduler.shutdownNow();
+            scheduler = null;
+        }
 
         unregisterReceiver(geofenceUpdateBroadcastReceiver);
         unregisterReceiver(geofenceEnterBroadcastReceiver);
@@ -134,12 +148,16 @@ public class GeofenceActivity extends FragmentActivity {
         map.setOnMapLoadedCallback(onMapLoadedCallback);
         map.setOnMapClickListener(onMapClickListener);
         map.clear();
-        if (Pivotal.getGeofencesEnabled(this)) {
+        if (Preferences.getAreGeofencesEnabled(this)) {
             final List<Map<String, String>> geofences = loadGeofences();
             final LatLngBounds.Builder builder = LatLngBounds.builder();
             if (geofences != null && !geofences.isEmpty()) {
+                currentlyDisplayedGeofences = geofences.size();
                 addGeofences(geofences, builder);
+                setupExpiryAlarm(geofences);
                 latLngBounds = builder.build();
+            } else {
+                currentlyDisplayedGeofences = 0;
             }
         } else {
             Toast.makeText(this, "Note that geofences are currently disabled.", Toast.LENGTH_SHORT).show();
@@ -157,12 +175,16 @@ public class GeofenceActivity extends FragmentActivity {
                 final LatLng point = new LatLng(latitude, longitude);
 
                 builder.include(point);
+                builder.include(new LatLng(point.latitude - radius * LATITUDE_PADDING / METERS_PER_DEGREE_LATITUDE, point.longitude));
+                builder.include(new LatLng(point.latitude + radius * LATITUDE_PADDING / METERS_PER_DEGREE_LATITUDE, point.longitude));
+                builder.include(new LatLng(point.latitude, point.longitude - radius / METERS_PER_DEGREE_LATITUDE));
+                builder.include(new LatLng(point.latitude, point.longitude + radius / METERS_PER_DEGREE_LATITUDE));
 
                 final CircleOptions circleOptions = new CircleOptions()
                         .center(point)
                         .radius(radius)
                         .strokeWidth(1.0f)
-                        .fillColor(Color.argb(0x55, 0x00, 0x00, 0xff));
+                        .fillColor(getGeofenceFillColor(expiry));
                 final MarkerOptions markerOptions = new MarkerOptions()
                         .alpha(0.5f)
                         .position(point)
@@ -173,6 +195,18 @@ public class GeofenceActivity extends FragmentActivity {
                 map.addCircle(circleOptions);
             }
         }
+    }
+
+    private int getGeofenceFillColor(Date expiry) {
+        if (isExpired(expiry)) {
+            return Color.argb(0x55, 0xff, 0x00, 0x00);
+        } else {
+            return Color.argb(0x55, 0x00, 0x00, 0xff);
+        }
+    }
+
+    private boolean isExpired(Date expiry) {
+        return expiry.getTime() <= System.currentTimeMillis();
     }
 
     private List<Map<String, String>> loadGeofences() {
@@ -217,6 +251,48 @@ public class GeofenceActivity extends FragmentActivity {
         }
     }
 
+    private void setupExpiryAlarm(List<Map<String, String>> geofences) {
+
+        final PriorityQueue<Date> dates = new PriorityQueue<>();
+        for (final Map<String, String> geofence : geofences) {
+            if (geofence != null) {
+                final String e = geofence.get("expiry");
+                if (e != null) {
+                    final Date expiry = new Date(Long.parseLong(e));
+                    if (!isExpired(expiry)) {
+                        dates.add(expiry);
+                    }
+                }
+            }
+        }
+
+        final Date firstDate = dates.poll();
+        if (firstDate == null) {
+            return;
+        }
+
+        final long delay = firstDate.getTime() - System.currentTimeMillis();
+
+        if (scheduler != null) {
+            scheduler.shutdownNow();
+        }
+
+        scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.schedule(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (scheduler != null) {
+                            setUpMap();
+                        }
+                    }
+                });
+            }
+        }, delay, TimeUnit.MILLISECONDS);
+    }
+
     private final BroadcastReceiver geofenceUpdateBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -259,7 +335,11 @@ public class GeofenceActivity extends FragmentActivity {
         @Override
         public void onMapLoaded() {
             if (map != null && latLngBounds != null) {
-                map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 80));
+                if (currentlyDisplayedGeofences > 0) {
+                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 80));
+                } else {
+                    map.animateCamera(CameraUpdateFactory.zoomBy(-1.5f));
+                }
             }
         }
     };

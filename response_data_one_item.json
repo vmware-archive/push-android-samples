@@ -3,19 +3,19 @@
     "last_modified": 1424309210305,
     "geofences": [
         {
-            "id": 44,
+            "id": 5,
             "data": {
-                "message": "More Park"
+                "android":{"message": "More Park"}
             },
-            "trigger_type": "exit",
+            "trigger_type": "enter",
             "expiry_time": 2056720182000,
             "locations": [
                 {
-                    "id": 77,
-                    "name": "Tommy Thompson Park",
-                    "lat": 43.628246,
-                    "long": -79.329028,
-                    "rad": 1800
+                    "id": 88,
+                    "name": "Kensington Market",
+                    "lat": 43.654834,
+                    "long": -79.4028751,
+                    "rad": 400
                 }
             ]
         }

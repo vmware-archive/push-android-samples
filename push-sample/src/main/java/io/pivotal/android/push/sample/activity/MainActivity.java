@@ -8,11 +8,13 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.Set;
 
@@ -25,6 +27,7 @@ import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.dialog.ClearRegistrationDialogFragment;
 import io.pivotal.android.push.sample.dialog.SelectTagsDialogFragment;
 import io.pivotal.android.push.sample.helper.MessageSender;
+import io.pivotal.android.push.sample.service.PushService;
 import io.pivotal.android.push.sample.util.Preferences;
 
 public class MainActivity extends LoggingActivity {
@@ -59,6 +62,11 @@ public class MainActivity extends LoggingActivity {
         updateLogRowColour();
         clearNotifications();
         setup();
+
+        final Intent i = getIntent();
+        if (i.getAction().equals(PushService.NOTIFICATION_ACTION)) {
+            Push.getInstance(this).logOpenedNotification(i.getExtras());
+        }
     }
 
     protected Class<? extends PreferencesActivity> getPreferencesActivity() {
@@ -121,12 +129,18 @@ public class MainActivity extends LoggingActivity {
         addLogMessage(R.string.starting_registration);
 
         try {
-            // TODO - find a way to let the user supply tags
-            push.startRegistration(Preferences.getDeviceAlias(this), null, new RegistrationListener() {
+
+            final Set<String> subscribedTags = Preferences.getSubscribedTags(this);
+            final String deviceAlias = Preferences.getDeviceAlias(this);
+            final boolean areGeofencesEnabled = Preferences.getAreGeofencesEnabled(this);
+
+            addLogMessage("subscribedTags:" + subscribedTags + " deviceAlias:" + deviceAlias + " areGeofencesEnabled:" + areGeofencesEnabled);
+
+            push.startRegistration(deviceAlias, subscribedTags, areGeofencesEnabled, new RegistrationListener() {
 
                 @Override
                 public void onRegistrationComplete() {
-                    queueLogMessage(R.string.registration_successful);
+                    queueLogMessage(getString(R.string.registration_successful) + " " + push.getDeviceUuid());
                 }
 
                 @Override
@@ -223,7 +237,12 @@ public class MainActivity extends LoggingActivity {
     }
 
     private void startGeofencesActivity() {
-        final Intent intent = new Intent(this, GeofenceActivity.class);
-        startActivity(intent);
+        final int accessGpsPermission = checkCallingOrSelfPermission("android.permission.ACCESS_FINE_LOCATION");
+        if (accessGpsPermission == PackageManager.PERMISSION_GRANTED) {
+            final Intent intent = new Intent(this, GeofenceActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Android permission ACCESS_FINE_LOCATION required to use the map activity.", Toast.LENGTH_LONG).show();
+        }
     }
 }
