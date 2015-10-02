@@ -3,7 +3,13 @@ Pivotal CF Mobile Services Push SDK Samples for Android
 
 Push SDK Usage
 --------------
-For more information please visit the [docs site](https://github.com/cfmobile/docs-pushnotifications-android)
+
+For more information please visit the [docs site](http://docs.pivotal.io/mobile/push/android/)
+
+IMPORTANT: Please note that you should be able to build both of the apps below without any modification HOWEVER
+you will need to change the `pivotal.properties` file to point the SDK to your own PCF Push Notification
+Server install.  The default build is usually set up to point to a test server and it will not likely
+work under your conditions.
 
 
 Push Demo Application
