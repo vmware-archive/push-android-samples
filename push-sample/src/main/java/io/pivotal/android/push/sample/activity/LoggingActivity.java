@@ -8,7 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,7 +33,7 @@ import io.pivotal.android.push.sample.util.StringUtil;
 import io.pivotal.android.push.util.Logger;
 import io.pivotal.android.push.util.ThreadUtil;
 
-public abstract class LoggingActivity extends ActionBarActivity implements MessageLogger {
+public abstract class LoggingActivity extends AppCompatActivity implements MessageLogger {
 
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss.SSS");
     private static final int[] baseRowColours = new int[]{0xddeeff, 0xddffee, 0xffeedd};
