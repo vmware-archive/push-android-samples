@@ -20,7 +20,7 @@
     <!-- These two parameters are only required if you want to send push messages via the Pivotal CF Mobile Services -->
     <!-- server in the sample app.  They are not used during the registration process.  You should be able to obtain -->
     <!-- them by creating an application in the Pivotal CF Mobile Services Push Server admin console.                -->
-    <string name="pref_default_pcf_app_uuid">fc00e342-a7b7-475f-9835-c145d29d7059</string>
-    <string name="pref_default_pcf_api_key">fd397ff0-5a71-45c5-a1bd-873bc527fdcc</string>
+    <string name="pref_default_pcf_app_uuid">caa11290-a193-4774-ab56-b280ebdaa94d</string>
+    <string name="pref_default_pcf_api_key">42333b54-9476-43cb-9f43-38bd3f94b204</string>
 
 </resources>
