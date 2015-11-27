@@ -3,14 +3,21 @@
  */
 package io.pivotal.android.push.sample.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -41,6 +48,9 @@ public class MainActivity extends LoggingActivity {
     private static final String BACKEND_DEVICE_REGISTRATION_ID = "backend_device_registration_id";
     private static final String BASE_SERVER_URL = "base_server_url";
     private static final String GEOFENCE_UPDATE = "geofence_update";
+
+    private static final int ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE = 9;
+    private static final int GEOFENCES_ACTIVITY_PERMISSION_REQUEST_CODE = 13;
 
     private Push push;
     private MessageSender sender;
@@ -115,7 +125,7 @@ public class MainActivity extends LoggingActivity {
                 break;
 
             case R.id.action_geofence:
-                startGeofencesActivity();
+                requestPermissionForGeofencesActivity();
                 break;
 
             default:
@@ -127,29 +137,75 @@ public class MainActivity extends LoggingActivity {
     private void register() {
         updateLogRowColour();
         addLogMessage(R.string.starting_registration);
+        requestPermissionToAccessLocation();
+    }
+
+    private void requestPermissionToAccessLocation() {
+
+        // Accessing the device location is only required if using geofences.
 
         try {
-
-            final Set<String> subscribedTags = Preferences.getSubscribedTags(this);
-            final String deviceAlias = Preferences.getDeviceAlias(this);
             final boolean areGeofencesEnabled = Preferences.getAreGeofencesEnabled(this);
 
-            addLogMessage("subscribedTags:" + subscribedTags + " deviceAlias:" + deviceAlias + " areGeofencesEnabled:" + areGeofencesEnabled);
+            if (areGeofencesEnabled) {
 
-            push.startRegistration(deviceAlias, subscribedTags, areGeofencesEnabled, new RegistrationListener() {
+                final Dialog dialog = new AlertDialog.Builder(this).
+                        setMessage(R.string.geofence_permission).
+                        setPositiveButton(R.string.ok, null).
+                        create();
 
-                @Override
-                public void onRegistrationComplete() {
-                    queueLogMessage(getString(R.string.registration_successful) + " " + push.getDeviceUuid());
+                if (push.requestPermissions(this, ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE, dialog)) {
+                    // Permission is already granted.  Otherwise, requestPermissions will display
+                    // the provided dialog box which will call onRequestPermissionsResults below (API >= 23)
+                    startRegistrationWithGeofencesEnabled(true);
                 }
 
-                @Override
-                public void onRegistrationFailed(String reason) {
-                    queueLogMessage(getString(R.string.registration_failed) + reason);
-                }
-            });
+            } else {
+                startRegistrationWithGeofencesEnabled(false);
+            }
+
         } catch (Exception e) {
             queueLogMessage(e.getLocalizedMessage());
+        }
+    }
+
+    private void startRegistrationWithGeofencesEnabled(boolean areGeofencesEnabled) {
+        final Set<String> subscribedTags = Preferences.getSubscribedTags(this);
+        final String deviceAlias = Preferences.getDeviceAlias(this);
+
+        addLogMessage("subscribedTags:" + subscribedTags + " deviceAlias:" + deviceAlias + " areGeofencesEnabled:" + areGeofencesEnabled);
+
+        push.startRegistration(deviceAlias, subscribedTags, areGeofencesEnabled, new RegistrationListener() {
+            @Override
+            public void onRegistrationComplete() {
+                queueLogMessage(getString(R.string.registration_successful) + " " + push.getDeviceUuid());
+            }
+
+            @Override
+            public void onRegistrationFailed(String reason) {
+                queueLogMessage(getString(R.string.registration_failed) + reason);
+            }
+        });
+    }
+
+    @Override
+    // Only called on API level >= 23
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startRegistrationWithGeofencesEnabled(true);
+            } else {
+                startRegistrationWithGeofencesEnabled(false);
+            }
+
+        } else if (requestCode == GEOFENCES_ACTIVITY_PERMISSION_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startGeofencesActivity();
+            } else {
+                Toast.makeText(this, R.string.maps_requires_location_permission, Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -236,13 +292,43 @@ public class MainActivity extends LoggingActivity {
         dialog.show(getSupportFragmentManager(), "ClearRegistrationDialogFragment");
     }
 
-    private void startGeofencesActivity() {
-        final int accessGpsPermission = checkCallingOrSelfPermission("android.permission.ACCESS_FINE_LOCATION");
-        if (accessGpsPermission == PackageManager.PERMISSION_GRANTED) {
-            final Intent intent = new Intent(this, GeofenceActivity.class);
-            startActivity(intent);
+    private void requestPermissionForGeofencesActivity() {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            if (Build.VERSION.SDK_INT >= 23) {
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                    new AlertDialog.Builder(this)
+                            .setMessage(R.string.geofence_permission)
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    ActivityCompat.requestPermissions(MainActivity.this,
+                                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                            GEOFENCES_ACTIVITY_PERMISSION_REQUEST_CODE);
+                                }
+                            })
+                            .create()
+                            .show();
+
+                } else {
+
+                    ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, GEOFENCES_ACTIVITY_PERMISSION_REQUEST_CODE);
+                }
+            } else {
+                Toast.makeText(this, R.string.maps_requires_location_permission, Toast.LENGTH_LONG).show();
+            }
+
         } else {
-            Toast.makeText(this, "Android permission ACCESS_FINE_LOCATION required to use the map activity.", Toast.LENGTH_LONG).show();
+            // Permission already granted
+            startGeofencesActivity();
         }
+    }
+
+    private void startGeofencesActivity() {
+        final Intent intent = new Intent(this, GeofenceActivity.class);
+        startActivity(intent);
     }
 }

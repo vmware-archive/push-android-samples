@@ -12,6 +12,12 @@
     <uses-permission android:name="io.pivotal.android.push.demo.permission.C2D_MESSAGE" />
     <!-- =============================================================================================== -->
 
+    <!-- =============================================================================================== -->
+    <!-- Use these two permissions if you want to use the geofence features of the Pivotal Push SDK      -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- =============================================================================================== -->
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_pivotal_logo"

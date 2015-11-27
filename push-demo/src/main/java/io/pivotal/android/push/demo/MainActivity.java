@@ -3,12 +3,16 @@
  */
 package io.pivotal.android.push.demo;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import java.util.Set;
@@ -16,7 +20,7 @@ import java.util.Set;
 import io.pivotal.android.push.Push;
 import io.pivotal.android.push.registration.RegistrationListener;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     // Set to your own defined alias for this device.  May not be null.  May be empty.
     private static final String DEVICE_ALIAS = "push-device-alias";
@@ -27,32 +31,98 @@ public class MainActivity extends ActionBarActivity {
     // Set areGeofencesEnabled. Default is true.
     private static final boolean ARE_GEOFENCES_ENABLED = true;
 
+    // Request code when requesting permission to use geofences.
+    private static final int REQUEST_PERMISSION_FOR_GEOFENCES_RESPONSE_CODE = 27;
+
     private BroadcastReceiver messageBroadcastReceiver = null;
+    private boolean isRegistering;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+        requestPermissionForGeofences();
+    }
+
+    private void requestPermissionForGeofences() {
+
+        if (ARE_GEOFENCES_ENABLED) {
+
+            // If you want to use geofences and are targetting Android Marshmallow or greater, then you must specifically
+            // ask the user for permission to read the device location.  The following Dialog class is used to explain
+            // to the user why your app is requesting permission to read the device location.
+
+            final Dialog dialog = new AlertDialog.Builder(this)
+                    .setMessage("The Push Demo App needs permission to read the device location in order to send you notifications when you enter certain locations.")
+                    .setPositiveButton("OK", null)
+                    .create();
+
+            final boolean werePermissionsAlreadyGranted = Push.getInstance(this).requestPermissions(this, REQUEST_PERMISSION_FOR_GEOFENCES_RESPONSE_CODE, dialog);
+
+            if (werePermissionsAlreadyGranted) {
+
+                // If Push.requestPermissions returns true then ACCESS_FINE_LOCATION permission has already been granted
+                // and we can immediately begin push registration.
+
+                startPushRegistrationWithGeofencesEnabled(true);
+            }
+
+        } else {
+            startPushRegistrationWithGeofencesEnabled(false);
+        }
+    }
+
+    private void startPushRegistrationWithGeofencesEnabled(boolean areGeofencesEnabled) {
+
+        printMessage("Device Alias: " + DEVICE_ALIAS);
+        printMessage("Tags: " + TAGS);
+        printMessage("Geofences enabled: " + areGeofencesEnabled);
+        printMessage("Registering for notifications...");
+
+        Push.getInstance(this).startRegistration(DEVICE_ALIAS, TAGS, areGeofencesEnabled, new RegistrationListener() {
+
+            @Override
+            public void onRegistrationComplete() {
+                printMessage("Registration successful.");
+            }
+
+            @Override
+            public void onRegistrationFailed(String reason) {
+                printMessage("Registration failed. Reason is '" + reason + "'.");
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        // This callback is invoked by Android after the user decides to allow or deny permission for ACCESS_FINE_LOCATION.
+        // If Push.requestPermissions returns false then you need to wait for this callback before attempting
+        // to register for pushes.
+
+        if (requestCode == REQUEST_PERMISSION_FOR_GEOFENCES_RESPONSE_CODE && permissions[0].equals(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startPushRegistrationWithGeofencesEnabled(true);
+            } else {
+                startPushRegistrationWithGeofencesEnabled(false);
+            }
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        queueLogMessage("DEVICE_ALIAS: " + DEVICE_ALIAS);
-        queueLogMessage("TAGS: " + TAGS);
-        queueLogMessage("Registering for notifications...");
-
-        registerForPushNotifications();
-
         messageBroadcastReceiver = getBroadcastReceiver();
-        IntentFilter intentFilter = getIntentFilter();
+        IntentFilter intentFilter = new IntentFilter(PushService.ACTION_KEY);
         registerReceiver(messageBroadcastReceiver, intentFilter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
         unregisterReceiver(messageBroadcastReceiver);
         messageBroadcastReceiver = null;
     }
@@ -63,33 +133,13 @@ public class MainActivity extends ActionBarActivity {
             public void onReceive(Context context, Intent intent) {
                 if (intent != null) {
                     String message = intent.getStringExtra(PushService.MESSAGE_KEY);
-                    queueLogMessage(message);
+                    printMessage(message);
                 }
             }
         };
     }
 
-    private IntentFilter getIntentFilter() {
-        return new IntentFilter(PushService.ACTION_KEY);
-    }
-
-    private void registerForPushNotifications() {
-
-        Push.getInstance(this).startRegistration(DEVICE_ALIAS, TAGS, ARE_GEOFENCES_ENABLED, new RegistrationListener() {
-
-            @Override
-            public void onRegistrationComplete() {
-                queueLogMessage("Registration successful.");
-            }
-
-            @Override
-            public void onRegistrationFailed(String reason) {
-                queueLogMessage("Registration failed. Reason is '" + reason + "'.");
-            }
-        });
-    }
-
-    private void queueLogMessage(final String message) {
+    private void printMessage(final String message) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
