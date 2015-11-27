@@ -3,7 +3,7 @@ Pivotal CF Mobile Services Push SDK Samples for Android
 
 Push SDK Usage
 --------------
-For more information please visit the [docs site](https://github.com/cfmobile/docs-pushnotifications-android)
+For more information please visit the [docs site](http://docs.pivotal.io/mobile/push/android/)
 
 
 Push Demo Application
