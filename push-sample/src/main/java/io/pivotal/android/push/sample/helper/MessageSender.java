@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import io.pivotal.android.push.prefs.Pivotal;
@@ -25,8 +27,9 @@ import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.adapter.MessageLogger;
 import io.pivotal.android.push.sample.dialog.SelectTagsDialogFragment;
 import io.pivotal.android.push.sample.dialog.SendMessageDialogFragment;
-import io.pivotal.android.push.sample.model.PCFPushMessageRequest;
 import io.pivotal.android.push.sample.model.GcmMessageRequest;
+import io.pivotal.android.push.sample.model.PCFPushMessageCustom;
+import io.pivotal.android.push.sample.model.PCFPushMessageRequest;
 import io.pivotal.android.push.sample.util.Preferences;
 import io.pivotal.android.push.util.DebugUtil;
 
@@ -73,6 +76,8 @@ public class MessageSender {
                     case SendMessageDialogFragment.VIA_PCF_PUSH_TAGS:
                         sendMessageViaPCFPushAndTags();
                         break;
+                    case SendMessageDialogFragment.HEARTBEAT:
+                        sendHeartbeat();
                     default:
                 }
             }
@@ -108,6 +113,25 @@ public class MessageSender {
         }
         logger.addLogMessage(R.string.pcf_sending_message);
         logger.addLogMessage(context.getString(R.string.message_body_data) + data);
+
+        postMessageToPCF(data);
+    }
+
+    public void sendHeartbeat() {
+        logger.updateLogRowColour();
+        final String data = getPCFPushHeartbeatRequestString();
+
+        if (data == null) {
+            logger.addLogMessage(R.string.need_to_be_registered_error);
+            return;
+        }
+        logger.addLogMessage(R.string.pcf_sending_heartbeat_message);
+        logger.addLogMessage(context.getString(R.string.message_body_data) + data);
+
+        postMessageToPCF(data);
+    }
+
+    private void postMessageToPCF(final String data) {
 
         AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
             @Override
@@ -148,7 +172,7 @@ public class MessageSender {
             }
         };
 
-        asyncTask.execute((Void)null);
+        asyncTask.execute((Void) null);
     }
 
     private String getBasicAuthorizationValue() {
@@ -176,10 +200,24 @@ public class MessageSender {
         final PCFPushMessageRequest messageRequest;
         if (tags != null) {
             final String[] tagsArray = tags.toArray(new String[tags.size()]);
-            messageRequest = new PCFPushMessageRequest(messageBody, null, tagsArray);
+            messageRequest = new PCFPushMessageRequest(messageBody, null, tagsArray, null);
         } else {
-            messageRequest = new PCFPushMessageRequest(messageBody, devices, null);
+            messageRequest = new PCFPushMessageRequest(messageBody, devices, null, null);
         }
+        final Gson gson = new Gson();
+        return gson.toJson(messageRequest);
+    }
+
+    private String getPCFPushHeartbeatRequestString() {
+        final String device_uuid = readIdFromFile(DEVICE_UUID);
+        if (device_uuid == null) {
+            return null;
+        }
+        final String messageBody = context.getString(R.string.pcf_message) + logger.getLogTimestamp();
+        final Map<String, String> androidExtras = new HashMap<>();
+        androidExtras.put("pcf.push.heartbeat.sentAt", Long.toString(System.currentTimeMillis()));
+        final PCFPushMessageCustom custom = new PCFPushMessageCustom(androidExtras);
+        final PCFPushMessageRequest messageRequest = new PCFPushMessageRequest(messageBody, null, new String[] {"heartbeat"}, custom); // TODO - change tag to "pcf.push.heartbeat"
         final Gson gson = new Gson();
         return gson.toJson(messageRequest);
     }
@@ -295,4 +333,5 @@ public class MessageSender {
             }
         }
     }
+
 }

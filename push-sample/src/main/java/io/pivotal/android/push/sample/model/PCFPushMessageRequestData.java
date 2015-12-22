@@ -10,7 +10,11 @@ public class PCFPushMessageRequestData {
     @SerializedName("body")
     public String body;
 
-    public PCFPushMessageRequestData(String body) {
+    @SerializedName("custom")
+    public PCFPushMessageCustom custom;
+
+    public PCFPushMessageRequestData(String body, PCFPushMessageCustom custom) {
         this.body = body;
+        this.custom = custom;
     }
 }

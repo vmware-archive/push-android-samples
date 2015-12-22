@@ -93,6 +93,7 @@
         <item>Via GCM</item>
         <item>Via PCF Push</item>
         <item>Via PCF Push with Tags</item>
+        <item>Heartbeat</item>
         <item>Cancel</item>
     </string-array>
 
@@ -101,6 +102,7 @@
         <item>BETA</item>
         <item>GAMMA</item>
         <item>DELTA</item>
+        <item>HEARTBEAT</item> <!-- TODO: change tag to "PCF.PUSH.HEARTBEAT" -->
     </string-array>
 
     <string name="title_activity_geofence">Geofences</string>
@@ -114,4 +116,5 @@
     <string name="geofence_permission">The Push Sample app needs to read your location in order to monitor geofences and send you a notification when you enter monitored locations.</string>
     <string name="maps_requires_location_permission">Android permission ACCESS_FINE_LOCATION required to use the map activity.</string>
     <string name="request_write_external_storage_permission">The Push Sample app needs to write to external storage in order to help you send debug push messages and view your currently monitored geofences.</string>
+    <string name="pcf_sending_heartbeat_message">Requesting heartbeat message…</string>
 </resources>
