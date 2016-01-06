@@ -13,6 +13,7 @@ import android.support.v4.app.NotificationCompat;
 
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.activity.MainActivity;
+import io.pivotal.android.push.sample.util.Preferences;
 import io.pivotal.android.push.service.GcmService;
 import io.pivotal.android.push.util.Logger;
 
@@ -21,7 +22,8 @@ public class PushService extends GcmService {
     public static final String GEOFENCE_ENTER_BROADCAST = "io.pivotal.android.push.sample.GEOFENCE_ENTER";
     public static final String GEOFENCE_EXIT_BROADCAST = "io.pivotal.android.push.sample.GEOFENCE_EXIT";
 
-    private static final int NOTIFICATION_ID = 1;
+    private static final int MESSAGE_NOTIFICATION_ID = 1;
+    private static final int HEARTBEAT_NOTIFICATION_ID = 2;
     private static final int NOTIFICATION_LIGHTS_COLOUR = 0xff008981;
     private static final int NOTIFICATION_LIGHTS_ON_MS = 500;
     private static final int NOTIFICATION_LIGHTS_OFF_MS = 1000;
@@ -38,7 +40,14 @@ public class PushService extends GcmService {
             message = getString(R.string.received_message_no_extras);
         }
         Logger.i(message);
-        sendNotification(getTag(payload), message, payload);
+        sendNotification(getTag(payload), message, payload, MESSAGE_NOTIFICATION_ID);
+    }
+
+    @Override
+    public void onReceiveHeartbeat(Bundle payload) {
+        final int heartbeatCount = Preferences.incrementHeartbeatCount(this);
+        Logger.i(getString(R.string.received_heartbeat_message, heartbeatCount));
+        sendNotification(getTag(payload), getString(R.string.received_heartbeat_message, heartbeatCount), payload, HEARTBEAT_NOTIFICATION_ID);
     }
 
     private String getTag(Bundle payload) {
@@ -54,19 +63,19 @@ public class PushService extends GcmService {
     @Override
     public void onReceiveMessageDeleted(Bundle payload) {
         Logger.i(getString(R.string.received_message_deleted));
-        sendNotification(getTag(payload), getString(R.string.deleted_message_server, payload.toString()), payload);
+        sendNotification(getTag(payload), getString(R.string.deleted_message_server, payload.toString()), payload, MESSAGE_NOTIFICATION_ID);
     }
 
     @Override
     public void onReceiveMessageSendError(Bundle payload) {
         Logger.i(getString(R.string.received_message_send_error));
-        sendNotification(getTag(payload), getString(R.string.send_error, payload.toString()), payload);
+        sendNotification(getTag(payload), getString(R.string.send_error, payload.toString()), payload, MESSAGE_NOTIFICATION_ID);
     }
 
     @Override
     public void onGeofenceEnter(Bundle payload) {
         Logger.i(getString(R.string.received_geofence_enter));
-        sendNotification(getTag(payload), getString(R.string.geofence_entered, payload.getString("message")), payload);
+        sendNotification(getTag(payload), getString(R.string.geofence_entered, payload.getString("message")), payload, MESSAGE_NOTIFICATION_ID);
 
         final Intent intent = new Intent(GEOFENCE_ENTER_BROADCAST);
         intent.replaceExtras(payload);
@@ -76,14 +85,14 @@ public class PushService extends GcmService {
     @Override
     public void onGeofenceExit(Bundle payload) {
         Logger.i(getString(R.string.received_geofence_exit));
-        sendNotification(getTag(payload), getString(R.string.geofence_exited, payload.getString("message")), payload);
+        sendNotification(getTag(payload), getString(R.string.geofence_exited, payload.getString("message")), payload, MESSAGE_NOTIFICATION_ID);
 
         final Intent intent = new Intent(GEOFENCE_EXIT_BROADCAST);
         intent.replaceExtras(payload);
         sendBroadcast(intent);
     }
 
-    private void sendNotification(String tag, String msg, Bundle payload) {
+    private void sendNotification(String tag, String msg, Bundle payload, int notificationId) {
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         final Intent intent = new Intent(this, MainActivity.class);
@@ -100,6 +109,6 @@ public class PushService extends GcmService {
             .setContentIntent(contentIntent)
             .setContentText(msg);
 
-        notificationManager.notify(tag, NOTIFICATION_ID, builder.build());
+        notificationManager.notify(tag, notificationId, builder.build());
     }
 }

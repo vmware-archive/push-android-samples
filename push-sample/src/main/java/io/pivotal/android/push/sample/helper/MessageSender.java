@@ -217,7 +217,7 @@ public class MessageSender {
         final Map<String, String> androidExtras = new HashMap<>();
         androidExtras.put("pcf.push.heartbeat.sentAt", Long.toString(System.currentTimeMillis()));
         final PCFPushMessageCustom custom = new PCFPushMessageCustom(androidExtras);
-        final PCFPushMessageRequest messageRequest = new PCFPushMessageRequest(messageBody, null, new String[] {"heartbeat"}, custom); // TODO - change tag to "pcf.push.heartbeat"
+        final PCFPushMessageRequest messageRequest = new PCFPushMessageRequest(messageBody, null, new String[] {"pcf.push.heartbeat"}, custom);
         final Gson gson = new Gson();
         return gson.toJson(messageRequest);
     }

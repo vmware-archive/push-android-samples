@@ -18,13 +18,15 @@ public class Preferences {
     public static final String PCF_PUSH_API_KEY = "test_pcf_api_key";
     public static final String SUBSCRIBED_TAGS = "test_subscribed_tags";
     public static final String ARE_GEOFENCES_ENABLED = "test_are_geofences_enabled";
+    public static final String HEARTBEAT_COUNT = "test_heartbeat_count";
 
     public static final String[] PREFERENCE_NAMES = {
             DEVICE_ALIAS,
             GCM_BROWSER_API_KEY,
             PCF_PUSH_APP_UUID,
             PCF_PUSH_API_KEY,
-            ARE_GEOFENCES_ENABLED
+            ARE_GEOFENCES_ENABLED,
+            HEARTBEAT_COUNT
     };
 
     public static String getDeviceAlias(Context context) {
@@ -55,6 +57,14 @@ public class Preferences {
         final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.putStringSet(SUBSCRIBED_TAGS, tags);
         editor.apply();
+    }
+
+    public static int incrementHeartbeatCount(Context context) {
+        final int heartbeatCount = getSharedPreferences(context).getInt(HEARTBEAT_COUNT, 0) + 1;
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putInt(HEARTBEAT_COUNT, heartbeatCount);
+        editor.apply();
+        return heartbeatCount;
     }
 
     private static SharedPreferences getSharedPreferences(Context context) {
