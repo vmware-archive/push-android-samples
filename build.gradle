@@ -18,7 +18,10 @@ subprojects {
 
     ext {
         // Pivotal CF Mobile Services dependencies
-        pushSdk = 'io.pivotal.android:push:1.5.0'
+        pushSdkVersionName = System.getenv("PUSH_SDK_VERSION") ?: "1.5.0"
+        pushSdk = 'io.pivotal.android:push:' + pushSdkVersionName
+
+        println "Using Push SDK version: " + pushSdkVersionName
     }
 
     apply plugin: 'android'
