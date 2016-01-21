@@ -22,6 +22,9 @@ subprojects {
         pushSdk = 'io.pivotal.android:push:' + pushSdkVersionName
 
         println "Using Push SDK version: " + pushSdkVersionName
+
+        debugKeystorePath = new File(System.getProperty('user.home'), '.android').absolutePath + "/PCFPush.android.debug.keystore"
+        println "Using debugKeystorePath: " + debugKeystorePath
     }
 
     apply plugin: 'android'
@@ -35,6 +38,12 @@ subprojects {
             versionName "1.5.0"
             minSdkVersion 16
             targetSdkVersion 23
+        }
+
+        signingConfigs {
+            debug {
+                storeFile file(debugKeystorePath)
+            }
         }
     }
 }
