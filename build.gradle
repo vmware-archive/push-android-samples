@@ -23,7 +23,7 @@ subprojects {
 
         println "Using Push SDK version: " + pushSdkVersionName
 
-        debugKeystorePath = new File(System.getProperty('user.home'), '.android').absolutePath + "/PCFPush.android.debug.keystore"
+        debugKeystorePath = System.getenv("PUSH_DEBUG_SIGNING_KEY") ?: new File(System.getProperty('user.home'), '.android').absolutePath + "/PCFPush.android.debug.keystore"
         println "Using debugKeystorePath: " + debugKeystorePath
     }
 
