@@ -118,4 +118,5 @@
     <string name="request_write_external_storage_permission">The Push Sample app needs to write to external storage in order to help you send debug push messages and view your currently monitored geofences.</string>
     <string name="pcf_sending_heartbeat_message">Requesting heartbeat message…</string>
     <string name="received_heartbeat_message">Received heartbeat. Count: %1$d.</string>
+    <string name="pref_title_custom_user_id">Custom User ID</string>
 </resources>

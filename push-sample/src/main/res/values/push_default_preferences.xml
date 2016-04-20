@@ -10,6 +10,9 @@
     <!-- You are free to set this parameter to whatever you like.  It is used during the registration process.       -->
     <string name="pref_default_device_alias">push-sample-alias</string>
 
+    <!-- This parameter is specific to user using the device and is used in the registration process.                -->
+    <string name="pref_default_custom_user_id"/>
+
     <!-- Are geofences enabled in the sample app by default?  True or false.                                         -->
     <bool name="pref_default_are_geofences_enabled">true</bool>
 

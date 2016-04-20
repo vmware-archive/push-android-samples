@@ -6,14 +6,10 @@ package io.pivotal.android.push.sample.helper;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -22,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import io.pivotal.android.push.Push;
 import io.pivotal.android.push.prefs.Pivotal;
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.adapter.MessageLogger;
@@ -31,7 +28,6 @@ import io.pivotal.android.push.sample.model.GcmMessageRequest;
 import io.pivotal.android.push.sample.model.PCFPushMessageCustom;
 import io.pivotal.android.push.sample.model.PCFPushMessageRequest;
 import io.pivotal.android.push.sample.util.Preferences;
-import io.pivotal.android.push.util.DebugUtil;
 
 public class MessageSender {
 
@@ -53,15 +49,6 @@ public class MessageSender {
     }
 
     public void sendMessage() {
-        if (!DebugUtil.getInstance(context).isDebuggable()) {
-            Toast.makeText(context, R.string.release_build_error, Toast.LENGTH_LONG).show();
-            return;
-        }
-        final File externalFilesDir = context.getExternalFilesDir(null);
-        if (externalFilesDir == null) {
-            Toast.makeText(context, R.string.sdcard_error, Toast.LENGTH_LONG).show();
-            return;
-        }
         final SendMessageDialogFragment.Listener listener = new SendMessageDialogFragment.Listener() {
 
             @Override
@@ -191,7 +178,7 @@ public class MessageSender {
     }
 
     private String getPCFPushMessageRequestString(Set<String> tags) {
-        final String device_uuid = readIdFromFile(DEVICE_UUID);
+        final String device_uuid = Push.getInstance(context).getDeviceUuid();
         if (device_uuid == null) {
             return null;
         }
@@ -209,7 +196,7 @@ public class MessageSender {
     }
 
     private String getPCFPushHeartbeatRequestString() {
-        final String device_uuid = readIdFromFile(DEVICE_UUID);
+        final String device_uuid = Push.getInstance(context).getDeviceUuid();
         if (device_uuid == null) {
             return null;
         }
@@ -283,7 +270,7 @@ public class MessageSender {
     }
 
     private String getGcmMessageRequestString() {
-        final String regId = readIdFromFile(GCM_REGISTRATION_ID);
+        final String regId = Push.getInstance(context).getDeviceUuid();
         if (regId == null) {
             return null;
         }
@@ -293,45 +280,4 @@ public class MessageSender {
         final Gson gson = new Gson();
         return gson.toJson(messageRequest);
     }
-
-    private String readIdFromFile(String idType) {
-        final File externalFilesDir = context.getExternalFilesDir(null);
-        if (externalFilesDir == null) {
-            logger.addLogMessage(R.string.external_files_dir_error);
-            return null;
-        }
-        final File dir = new File(externalFilesDir.getAbsolutePath() + File.separator + "pushlib");
-        final File regIdFile = new File(dir, idType + ".txt");
-        if (!regIdFile.exists() || !regIdFile.canRead()) {
-            logger.addLogMessage(context.getString(R.string.read_file_error, idType, regIdFile.getAbsoluteFile()));
-            return null;
-        }
-        FileReader fr = null;
-        BufferedReader br = null;
-        try {
-            fr = new FileReader(regIdFile);
-            br = new BufferedReader(fr);
-            return br.readLine();
-
-        } catch (Exception e) {
-            logger.addLogMessage(context.getString(R.string.error_reading_file, idType, e.getLocalizedMessage()));
-            return null;
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    // Swallow exception
-                }
-            }
-            if (fr != null) {
-                try {
-                    fr.close();
-                } catch (IOException e) {
-                    // Swallow exception
-                }
-            }
-        }
-    }
-
 }

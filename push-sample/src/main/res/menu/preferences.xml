@@ -7,5 +7,4 @@
           android:icon="@drawable/ic_menu_delete"
           android:title="@string/action_reset_preferences"
           app:showAsAction="always|withText" />
-
 </menu>

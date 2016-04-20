@@ -13,6 +13,7 @@ import java.util.Set;
 public class Preferences {
 
     public static final String DEVICE_ALIAS = "test_device_alias";
+    public static final String CUSTOM_USER_ID = "test_custom_user_id";
     public static final String GCM_BROWSER_API_KEY = "test_gcm_browser_api_key";
     public static final String PCF_PUSH_APP_UUID = "test_pcf_app_uuid";
     public static final String PCF_PUSH_API_KEY = "test_pcf_api_key";
@@ -22,6 +23,7 @@ public class Preferences {
 
     public static final String[] PREFERENCE_NAMES = {
             DEVICE_ALIAS,
+            CUSTOM_USER_ID,
             GCM_BROWSER_API_KEY,
             PCF_PUSH_APP_UUID,
             PCF_PUSH_API_KEY,
@@ -31,6 +33,10 @@ public class Preferences {
 
     public static String getDeviceAlias(Context context) {
         return getSharedPreferences(context).getString(DEVICE_ALIAS, null);
+    }
+
+    public static String getCustomUserId(Context context) {
+        return getSharedPreferences(context).getString(CUSTOM_USER_ID, null);
     }
 
     public static String getGcmBrowserApiKey(Context context) {

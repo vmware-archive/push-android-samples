@@ -172,10 +172,11 @@ public class MainActivity extends LoggingActivity {
     private void startRegistrationWithGeofencesEnabled(boolean areGeofencesEnabled) {
         final Set<String> subscribedTags = Preferences.getSubscribedTags(this);
         final String deviceAlias = Preferences.getDeviceAlias(this);
+        final String customUserId = Preferences.getCustomUserId(this);
 
-        addLogMessage("subscribedTags:" + subscribedTags + " deviceAlias:" + deviceAlias + " areGeofencesEnabled:" + areGeofencesEnabled);
+        addLogMessage("subscribedTags:" + subscribedTags + " deviceAlias:" + deviceAlias + " customUserId:" + customUserId + " areGeofencesEnabled:" + areGeofencesEnabled);
 
-        push.startRegistration(deviceAlias, subscribedTags, areGeofencesEnabled, new RegistrationListener() {
+        push.startRegistration(deviceAlias, customUserId, subscribedTags, areGeofencesEnabled, new RegistrationListener() {
             @Override
             public void onRegistrationComplete() {
                 queueLogMessage(getString(R.string.registration_successful) + " " + push.getDeviceUuid());
