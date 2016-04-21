@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -58,6 +59,9 @@ public class MainActivity extends LoggingActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
 
         if (logItems.isEmpty()) {
             addLogMessage(R.string.registration_instructions);
@@ -294,6 +298,13 @@ public class MainActivity extends LoggingActivity {
     }
 
     private void requestPermissionForGeofencesActivity() {
+
+        // There's a bug in Google Maps (Google Play Services 8.1.0 to 8.4.0, at least) that will crash if you try to load it without external
+        // storage available. Make sure that external storage is available before loading Google Maps.
+        if (getExternalCacheDir() == null) {
+            Toast.makeText(this, R.string.google_maps_sd_card, Toast.LENGTH_LONG).show();
+            return;
+        }
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
