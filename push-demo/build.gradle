@@ -1,4 +1,10 @@
 dependencies {
     compile pushSdk
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+}
+
+android {
+    defaultConfig {
+        applicationId "io.pivotal.android.push.demo"
+    }
 }
