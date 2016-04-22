@@ -7,13 +7,13 @@
         android:id="@+id/action_edit_preferences"
         android:icon="@drawable/ic_menu_preferences"
         android:title="@string/action_edit_preferences"
-        android:orderInCategory="999"
+        android:orderInCategory="998"
         app:showAsAction="withText"/>
 
     <item
         android:id="@+id/menu_about"
         android:title="@string/action_about"
-        android:orderInCategory="101"
+        android:orderInCategory="999"
         app:showAsAction="withText"/>
 
 </menu>

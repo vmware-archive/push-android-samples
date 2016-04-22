@@ -19,11 +19,12 @@ public class SelectTagsDialogFragment extends DialogFragment {
 
     public static final int OK = 0;
     public static final int CANCELLED = 1;
-
     private Listener listener;
+
     private CharSequence[] items;
     private boolean[] selectedItems;
     private int positiveButtonLabelResourceId;
+    private int titleResourceId;
 
     public interface Listener {
         void onClickResult(int result, Set<String> selectedTags);
@@ -31,6 +32,10 @@ public class SelectTagsDialogFragment extends DialogFragment {
 
     public void setListener(Listener listener) {
         this.listener = listener;
+    }
+
+    public void setTitleResourceId(int titleResourceId) {
+        this.titleResourceId = titleResourceId;
     }
 
     public void setPositiveButtonLabelResourceId(int positiveButtonLabelResourceId) {
@@ -43,7 +48,7 @@ public class SelectTagsDialogFragment extends DialogFragment {
         setupTags();
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.subscribe_to_tags_title);
+        builder.setTitle(titleResourceId);
         builder.setCancelable(true);
         builder.setMultiChoiceItems(items, selectedItems, new DialogInterface.OnMultiChoiceClickListener() {
             @Override

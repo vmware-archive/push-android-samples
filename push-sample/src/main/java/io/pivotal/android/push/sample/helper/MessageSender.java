@@ -3,9 +3,15 @@
  */
 package io.pivotal.android.push.sample.helper;
 
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -14,7 +20,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +36,8 @@ import io.pivotal.android.push.sample.model.GcmMessageRequest;
 import io.pivotal.android.push.sample.model.PCFPushMessageCustom;
 import io.pivotal.android.push.sample.model.PCFPushMessageRequest;
 import io.pivotal.android.push.sample.util.Preferences;
+import io.pivotal.android.push.sample.util.StringUtil;
+import io.pivotal.android.push.util.Logger;
 
 public class MessageSender {
 
@@ -58,10 +68,13 @@ public class MessageSender {
                         sendMessageViaGcm();
                         break;
                     case SendMessageDialogFragment.VIA_PCF_PUSH:
-                        sendMessageViaPCFPush(null);
+                        sendMessageViaPCFPush(null, null);
                         break;
                     case SendMessageDialogFragment.VIA_PCF_PUSH_TAGS:
-                        sendMessageViaPCFPushAndTags();
+                        selectTags();
+                        break;
+                    case SendMessageDialogFragment.VIA_PCF_PUSH_CUSTOM_USER_ID:
+                        selectCustomUserId();
                         break;
                     case SendMessageDialogFragment.HEARTBEAT:
                         sendHeartbeat();
@@ -74,26 +87,52 @@ public class MessageSender {
         dialog.show(context.getSupportFragmentManager(), "SendMessageDialogFragment");
     }
 
-    private void sendMessageViaPCFPushAndTags() {
+    private void selectTags() {
         final SelectTagsDialogFragment.Listener listener = new SelectTagsDialogFragment.Listener() {
 
             @Override
             public void onClickResult(int result, Set<String> selectedTags) {
                 if (result == SelectTagsDialogFragment.OK) {
-                    sendMessageViaPCFPush(selectedTags);
+                    sendMessageViaPCFPush(selectedTags, null);
                 }
             }
         };
 
         final SelectTagsDialogFragment dialog = new SelectTagsDialogFragment();
+        dialog.setTitleResourceId(R.string.send_to_tags_title);
         dialog.setPositiveButtonLabelResourceId(R.string.send);
         dialog.setListener(listener);
         dialog.show(context.getSupportFragmentManager(), "SelectTagsDialogFragment");
     }
 
-    private void sendMessageViaPCFPush(Set<String> tags) {
+    private void selectCustomUserId() {
+        final LayoutInflater inflater = context.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.dialog_custom_user_id, null);
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+        final EditText editText = (EditText)dialogView.findViewById(R.id.input);
+        editText.setText(Preferences.getCustomUserId(context));
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setTitle(R.string.push_to_custom_user_id);
+        dialogBuilder.setPositiveButton(R.string.push, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                final String customUserId = editText.getText().toString().trim();
+                if (customUserId.isEmpty()) {
+                    Toast.makeText(context, R.string.custom_user_id_empty, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Logger.fd(context.getString(R.string.push_to_custom_user_id_log), customUserId);
+
+                final Set<String> customUserIds = new HashSet<>(Arrays.asList(customUserId.split(",")));
+                sendMessageViaPCFPush(null, customUserIds);
+            }
+        });
+        dialogBuilder.setNegativeButton(R.string.cancel, null);
+        dialogBuilder.create().show();
+    }
+
+    private void sendMessageViaPCFPush(Set<String> tags, Set<String> customUserIds) {
         logger.updateLogRowColour();
-        final String data = getPCFPushMessageRequestString(tags);
+        final String data = getPCFPushMessageRequestString(tags, customUserIds);
         if (data == null) {
             logger.addLogMessage(R.string.need_to_be_registered_error);
             return;
@@ -177,22 +216,49 @@ public class MessageSender {
         outputStream.close();
     }
 
-    private String getPCFPushMessageRequestString(Set<String> tags) {
-        final String device_uuid = Push.getInstance(context).getDeviceUuid();
-        if (device_uuid == null) {
+    private String getPCFPushMessageRequestString(Set<String> tags, Set<String> customUserIds) {
+
+        final PCFPushMessageRequest messageRequest;
+
+        if (tags != null) {
+            messageRequest = targetByTag(tags);
+
+        } else if (customUserIds != null) {
+           messageRequest = targetByCustomUserIds(customUserIds);
+
+        } else {
+            messageRequest = targetByDeviceUuid();
+        }
+
+        if (messageRequest == null) {
             return null;
         }
-        final String[] devices = new String[]{device_uuid};
-        final String messageBody = context.getString(R.string.pcf_message) + logger.getLogTimestamp();
-        final PCFPushMessageRequest messageRequest;
-        if (tags != null) {
-            final String[] tagsArray = tags.toArray(new String[tags.size()]);
-            messageRequest = new PCFPushMessageRequest(messageBody, null, tagsArray, null);
-        } else {
-            messageRequest = new PCFPushMessageRequest(messageBody, devices, null, null);
-        }
+
         final Gson gson = new Gson();
         return gson.toJson(messageRequest);
+    }
+
+    private PCFPushMessageRequest targetByTag(Set<String> tags) {
+        final String[] tagsArray = tags.toArray(new String[tags.size()]);
+        final String messageBody = context.getString(R.string.pcf_message_by_tags, StringUtil.join(tags, ", "), logger.getLogTimestamp());
+        return new PCFPushMessageRequest(messageBody, null, tagsArray, null, null);
+    }
+
+    private PCFPushMessageRequest targetByCustomUserIds(Set<String> customUserIds) {
+        final String[] customUserIdsArray = customUserIds.toArray(new String[customUserIds.size()]);
+        final String messageBody = context.getString(R.string.pcf_message_by_custom_user_ids, StringUtil.join(customUserIds, ","), logger.getLogTimestamp());
+        return new PCFPushMessageRequest(messageBody, null, null, customUserIdsArray, null);
+    }
+
+    private PCFPushMessageRequest targetByDeviceUuid() {
+        final String deviceUuid = Push.getInstance(context).getDeviceUuid();
+        if (deviceUuid == null) {
+            return null;
+        }
+
+        final String[] devices = new String[] {deviceUuid};
+        final String messageBody = context.getString(R.string.pcf_message_by_device_uuid, logger.getLogTimestamp());
+        return new PCFPushMessageRequest(messageBody, devices, null, null, null);
     }
 
     private String getPCFPushHeartbeatRequestString() {
@@ -200,11 +266,11 @@ public class MessageSender {
         if (device_uuid == null) {
             return null;
         }
-        final String messageBody = context.getString(R.string.pcf_message) + logger.getLogTimestamp();
+        final String messageBody = context.getString(R.string.pcf_hearbeat_message, logger.getLogTimestamp());
         final Map<String, String> androidExtras = new HashMap<>();
         androidExtras.put("pcf.push.heartbeat.sentAt", Long.toString(System.currentTimeMillis()));
         final PCFPushMessageCustom custom = new PCFPushMessageCustom(androidExtras);
-        final PCFPushMessageRequest messageRequest = new PCFPushMessageRequest(messageBody, null, new String[] {"pcf.push.heartbeat"}, custom);
+        final PCFPushMessageRequest messageRequest = new PCFPushMessageRequest(messageBody, null, new String[] {"pcf.push.heartbeat"}, null, custom);
         final Gson gson = new Gson();
         return gson.toJson(messageRequest);
     }

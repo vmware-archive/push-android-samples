@@ -13,8 +13,12 @@ public class PCFPushMessageTarget {
     @SerializedName("tags")
     public String[] tags;
 
-    public PCFPushMessageTarget(String[] devices, String[] tags) {
+    @SerializedName("custom_user_ids")
+    public String[] customUserIds;
+
+    public PCFPushMessageTarget(String[] devices, String[] tags, String[] customUserIds) {
         this.devices = devices;
         this.tags = tags;
+        this.customUserIds = customUserIds;
     }
 }

@@ -242,6 +242,7 @@ public class MainActivity extends LoggingActivity {
         };
 
         final SelectTagsDialogFragment dialog = new SelectTagsDialogFragment();
+        dialog.setTitleResourceId(R.string.subscribe_to_tags_title);
         dialog.setPositiveButtonLabelResourceId(R.string.subscribe);
         dialog.setListener(listener);
         dialog.show(getSupportFragmentManager(), "SelectTagsDialogFragment");

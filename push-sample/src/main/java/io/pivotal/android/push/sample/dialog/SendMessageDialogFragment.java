@@ -16,8 +16,9 @@ public class SendMessageDialogFragment extends DialogFragment {
     public static final int VIA_GCM = 0;
     public static final int VIA_PCF_PUSH = 1;
     public static final int VIA_PCF_PUSH_TAGS = 2;
-    public static final int HEARTBEAT = 3;
-    public static final int CANCELLED = 4;
+    public static final int VIA_PCF_PUSH_CUSTOM_USER_ID = 3;
+    public static final int HEARTBEAT = 4;
+    public static final int CANCELLED = 5;
     private Listener listener;
 
     public interface Listener {

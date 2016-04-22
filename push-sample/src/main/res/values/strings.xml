@@ -12,7 +12,10 @@
     <string name="action_send_message">Send Message</string>
     <string name="action_unregister">Unregister</string>
     <string name="application_version">"Application version: "</string>
-    <string name="pcf_message">"This message was sent to PCF Push at "</string>
+    <string name="pcf_hearbeat_message">This heartbeat message was sent at %1$s.</string>
+    <string name="pcf_message_by_device_uuid">This message was sent to this device UUID at %1$s.</string>
+    <string name="pcf_message_by_tags">This message was sent to the tags [%1$s] at %2$s.</string>
+    <string name="pcf_message_by_custom_user_ids">This message was sent to custom user IDs [%1$s] at %2$s.</string>
     <string name="pcf_message_request_accepted">"PCF Push server accepted network request to send message. HTTP response status code is: "</string>
     <string name="pcf_parse_error">"ERROR: got exception parsing network response from PCF Push server: "</string>
     <string name="pcf_sending_message">Sending message via PCF Push server&#8230;</string>
@@ -20,7 +23,7 @@
     <string name="clear_pcf_push_device_registration">Clearing device registration from the PCF Push</string>
     <string name="clear_registrations">Clear Registrations</string>
     <string name="clearing_gcm_device_registration">Clearing device registration from GCM</string>
-    <string name="component_versions">\n\nPivotal CF Mobile Services\ncomponent versions:\n\n</string>
+    <string name="component_versions">\n\nPivotal CF\ncomponent versions:\n\n</string>
     <string name="deleted_message_server">Deleted messages on server: %1$s</string>
     <string name="error_reading_file">ERROR reading %1$s file: %2$s</string>
     <string name="external_files_dir_error">ERROR: Was not able to get the externalFilesDir</string>
@@ -70,7 +73,8 @@
     <string name="unregistration_successful">Unregistration successful.</string>
     <string name="action_subscribe_to_tags">Subscribe to Tags</string>
     <string name="starting_subscribe_to_tags">Starting subscribe to tags&#8230;</string>
-    <string name="subscribe_to_tags_title">Subscribe To Tags</string>
+    <string name="send_to_tags_title">Send to Tags</string>
+    <string name="subscribe_to_tags_title">Subscribe to Tags</string>
     <string name="cancel">Cancel</string>
     <string name="subscribe">Subscribe</string>
     <string name="send">Send</string>
@@ -92,7 +96,8 @@
     <string-array name="send_via_items">
         <item>Via GCM</item>
         <item>Via PCF Push</item>
-        <item>Via PCF Push with Tags</item>
+        <item>Via PCF Push Tags</item>
+        <item>Via PCF Push Custom User ID</item>
         <item>Heartbeat</item>
         <item>Cancel</item>
     </string-array>
@@ -120,4 +125,9 @@
     <string name="received_heartbeat_message">Received heartbeat. Count: %1$d.</string>
     <string name="pref_title_custom_user_id">Custom User ID</string>
     <string name="google_maps_sd_card">You need to have a mounted SD-card on your device before you can use Google Maps.</string>
+    <string name="push_to_custom_user_id">Push to Custom User ID</string>
+    <string name="push">Send Push</string>
+    <string name="push_to_custom_user_id_log">Pushing to custom user ID \'%s\'.</string>
+    <string name="custom_user_id_empty">Custom User ID can not be empty.</string>
+    <string name="custom_user_id_instructions">You can target multiple custom user IDs by separating them with commas.\n\nPlease note that custom user IDs are case-sensitive.</string>
 </resources>
