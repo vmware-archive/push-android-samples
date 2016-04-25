@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -44,9 +43,7 @@ public class MessageSender {
     private static final String POST = "POST";
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String APPLICATION_JSON = "application/json";
-    private static final String GCM_REGISTRATION_ID = "gcm_registration_id";
     private static final String AUTHORIZATION = "Authorization";
-    private static final String DEVICE_UUID = "device_uuid";
     private static final String GCM_SEND_MESSAGE_URL = "https://android.googleapis.com/gcm/send";
     private static final String PCF_PUSH_SEND_MESSAGE_URL = "v1/push";
 
@@ -122,7 +119,12 @@ public class MessageSender {
                 }
                 Logger.fd(context.getString(R.string.push_to_custom_user_id_log), customUserId);
 
-                final Set<String> customUserIds = new HashSet<>(Arrays.asList(customUserId.split(",")));
+                final String[] tokens = customUserId.split(",");
+                final Set<String> customUserIds = new HashSet<>();
+                for (final String s: tokens) {
+                    customUserIds.add(s.trim());
+                }
+
                 sendMessageViaPCFPush(null, customUserIds);
             }
         });

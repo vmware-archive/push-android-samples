@@ -16,12 +16,14 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.Set;
@@ -56,10 +58,12 @@ public class MainActivity extends LoggingActivity {
     private Push push;
     private MessageSender sender;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.send_push_button);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
@@ -80,6 +84,16 @@ public class MainActivity extends LoggingActivity {
         final Intent i = getIntent();
         if (i.getAction().equals(PushService.NOTIFICATION_ACTION)) {
             Push.getInstance(this).logOpenedNotification(i.getExtras());
+        }
+
+        final FloatingActionButton sendPushButton = (FloatingActionButton) findViewById(R.id.send_push_button);
+        if (sendPushButton != null) {
+            sendPushButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sender.sendMessage();
+                }
+            });
         }
     }
 
@@ -122,10 +136,6 @@ public class MainActivity extends LoggingActivity {
 
             case R.id.action_clear_registration:
                 clearRegistration();
-                break;
-
-            case R.id.action_send_message:
-                sender.sendMessage();
                 break;
 
             case R.id.action_geofence:
@@ -176,9 +186,15 @@ public class MainActivity extends LoggingActivity {
     private void startRegistrationWithGeofencesEnabled(boolean areGeofencesEnabled) {
         final Set<String> subscribedTags = Preferences.getSubscribedTags(this);
         final String deviceAlias = Preferences.getDeviceAlias(this);
-        final String customUserId = Preferences.getCustomUserId(this);
 
-        addLogMessage("subscribedTags:" + subscribedTags + " deviceAlias:" + deviceAlias + " customUserId:" + customUserId + " areGeofencesEnabled:" + areGeofencesEnabled);
+        final String customUserId;
+        if (Preferences.getCustomUserId(this).trim().isEmpty()) {
+            customUserId = null;
+        } else {
+            customUserId = Preferences.getCustomUserId(this).trim();
+        }
+
+        addLogMessage("subscribedTags:" + subscribedTags + " deviceAlias:'" + deviceAlias + "' customUserId:'" + customUserId + "' areGeofencesEnabled:" + areGeofencesEnabled);
 
         push.startRegistration(deviceAlias, customUserId, subscribedTags, areGeofencesEnabled, new RegistrationListener() {
             @Override

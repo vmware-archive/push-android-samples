@@ -7,8 +7,8 @@
         android:id="@+id/action_edit_preferences"
         android:icon="@drawable/ic_menu_preferences"
         android:title="@string/action_edit_preferences"
-        android:orderInCategory="998"
-        app:showAsAction="withText"/>
+        android:orderInCategory="2"
+        app:showAsAction="always|withText"/>
 
     <item
         android:id="@+id/menu_about"
