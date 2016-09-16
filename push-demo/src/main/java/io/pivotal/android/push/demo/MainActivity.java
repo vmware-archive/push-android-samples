@@ -13,7 +13,10 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
+
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.Set;
 
@@ -85,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRegistrationComplete() {
                 printMessage("Registration successful.");
+                printMessage("FCM TokenId:" + FirebaseInstanceId.getInstance().getToken());
+                Log.i("push-demo", "FCM TokenId:" + FirebaseInstanceId.getInstance().getToken());
             }
 
             @Override

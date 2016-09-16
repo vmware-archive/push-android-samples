@@ -5,7 +5,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0'
+        classpath 'com.android.tools.build:gradle:2.1.3'
+        classpath 'com.google.gms:google-services:3.0.0'
     }
 }
 
@@ -18,32 +19,12 @@ subprojects {
 
     ext {
         // Pivotal CF Mobile Services dependencies
-        pushSdkVersionName = System.getenv("PUSH_SDK_VERSION") ?: "1.5.0"
+        pushSdkVersionName = System.getenv("PUSH_SDK_VERSION") ?: "1.7.0"
         pushSdk = 'io.pivotal.android:push:' + pushSdkVersionName
 
         println "Using Push SDK version: " + pushSdkVersionName
 
         debugKeystorePath = System.getenv("PUSH_DEBUG_SIGNING_KEY") ?: new File(System.getProperty('user.home'), '.android').absolutePath + "/PCFPush.android.debug.keystore"
         println "Using debugKeystorePath: " + debugKeystorePath
-    }
-
-    apply plugin: 'android'
-
-    android {
-        compileSdkVersion 23
-        buildToolsVersion "23.0.2"
-
-        defaultConfig {
-            versionCode 6
-            versionName "1.5.0"
-            minSdkVersion 16
-            targetSdkVersion 23
-        }
-
-        signingConfigs {
-            debug {
-                storeFile file(debugKeystorePath)
-            }
-        }
     }
 }

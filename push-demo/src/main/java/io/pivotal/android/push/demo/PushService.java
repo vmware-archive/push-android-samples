@@ -10,10 +10,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
+import com.google.firebase.messaging.RemoteMessage;
+
+import io.pivotal.android.push.fcm.FcmMessagingService;
 import io.pivotal.android.push.service.GcmService;
 import io.pivotal.android.push.util.Logger;
 
-public class PushService extends GcmService {
+public class PushService extends FcmMessagingService {
 
     public static final int NOTIFICATION_ID = 1;
     public static final String ACTION_KEY = "io.pivotal.android.push.demo.PUSH_RECEIVED";
@@ -24,10 +27,10 @@ public class PushService extends GcmService {
     private static final int NOTIFICATION_LIGHTS_OFF_MS = 1000;
 
     @Override
-    public void onReceiveMessage(Bundle payload) {
+    public void onMessageNotificationReceived(RemoteMessage.Notification notification) {
         String message;
-        if (payload.containsKey(MESSAGE_KEY)) {
-            message = "Received: \"" + payload.getString(MESSAGE_KEY) + "\".";
+        if (!notification.getBody().isEmpty()) {
+            message = "Received: \"" + notification.getBody() + "\".";
         } else {
             message = "Received message with no extras.";
         }
@@ -36,22 +39,22 @@ public class PushService extends GcmService {
         showNotificationOnStatusBar(message);
     }
 
+    @Override
+    public void onReceiveDeletedMessages() {
+        Logger.i("Received deleted message.");
+        showNotificationOnStatusBar("Deleted messages on server");
+    }
+
+    @Override
+    public void onReceiveMessageSendError(String messageId, Exception exception) {
+        Logger.i("Received send error message.");
+        showNotificationOnStatusBar("Send error: [" + messageId + "]: "+ exception.toString());
+    }
+
     private void showNotificationInApp(String message) {
         Intent intent = new Intent(ACTION_KEY);
         intent.putExtra("message", message);
         sendBroadcast(intent);
-    }
-
-    @Override
-    public void onReceiveMessageDeleted(Bundle payload) {
-        Logger.i("Received message with type 'MESSAGE_TYPE_DELETED'.");
-        showNotificationOnStatusBar("Deleted messages on server: " + payload.toString());
-    }
-
-    @Override
-    public void onReceiveMessageSendError(Bundle payload) {
-        Logger.i("Received message with type 'MESSAGE_TYPE_SEND_ERROR'.");
-        showNotificationOnStatusBar("Send error: " + payload.toString());
     }
 
     private void showNotificationOnStatusBar(String msg) {
