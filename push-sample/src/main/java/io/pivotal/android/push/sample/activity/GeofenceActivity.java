@@ -1,9 +1,11 @@
 package io.pivotal.android.push.sample.activity;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -11,11 +13,13 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -132,35 +136,42 @@ public class GeofenceActivity extends FragmentActivity {
         // Do a null check to confirm that we have not already instantiated the map.
         if (map == null) {
             // Try to obtain the map from the SupportMapFragment.
-            map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-            // Check if we were successful in obtaining the map.
-            if (map != null) {
-                setUpMap();
-            }
+            ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    map = googleMap;
+                    setUpMap();
+                }
+            });
         }
     }
 
     private void setUpMap() {
-        map.getUiSettings().setZoomControlsEnabled(true);
-        map.getUiSettings().setMapToolbarEnabled(false);
-        map.getUiSettings().setMyLocationButtonEnabled(true);
-        map.setMyLocationEnabled(true);
-        map.setOnMapLoadedCallback(onMapLoadedCallback);
-        map.setOnMapClickListener(onMapClickListener);
-        map.clear();
-        if (Preferences.getAreGeofencesEnabled(this)) {
-            final List<Map<String, String>> geofences = loadGeofences();
-            final LatLngBounds.Builder builder = LatLngBounds.builder();
-            if (geofences != null && !geofences.isEmpty()) {
-                currentlyDisplayedGeofences = geofences.size();
-                addGeofences(geofences, builder);
-                setupExpiryAlarm(geofences);
-                latLngBounds = builder.build();
-            } else {
-                currentlyDisplayedGeofences = 0;
+        if (map != null) {
+            map.getUiSettings().setZoomControlsEnabled(true);
+            map.getUiSettings().setMapToolbarEnabled(false);
+            map.getUiSettings().setMyLocationButtonEnabled(true);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                map.setMyLocationEnabled(true);
             }
-        } else {
-            Toast.makeText(this, "Note that geofences are currently disabled.", Toast.LENGTH_SHORT).show();
+            map.setOnMapLoadedCallback(onMapLoadedCallback);
+            map.setOnMapClickListener(onMapClickListener);
+            map.clear();
+            if (Preferences.getAreGeofencesEnabled(this)) {
+                final List<Map<String, String>> geofences = loadGeofences();
+                final LatLngBounds.Builder builder = LatLngBounds.builder();
+                if (geofences != null && !geofences.isEmpty()) {
+                    currentlyDisplayedGeofences = geofences.size();
+                    addGeofences(geofences, builder);
+                    setupExpiryAlarm(geofences);
+                    latLngBounds = builder.build();
+                } else {
+                    currentlyDisplayedGeofences = 0;
+                }
+            } else {
+                Toast.makeText(this, "Note that geofences are currently disabled.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

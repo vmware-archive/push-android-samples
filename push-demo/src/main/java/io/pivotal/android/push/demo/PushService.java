@@ -7,13 +7,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Map;
+
 import io.pivotal.android.push.fcm.FcmMessagingService;
-import io.pivotal.android.push.service.GcmService;
 import io.pivotal.android.push.util.Logger;
 
 public class PushService extends FcmMessagingService {
@@ -27,7 +27,7 @@ public class PushService extends FcmMessagingService {
     private static final int NOTIFICATION_LIGHTS_OFF_MS = 1000;
 
     @Override
-    public void onMessageNotificationReceived(RemoteMessage.Notification notification) {
+    public void onMessageNotificationReceived(RemoteMessage.Notification notification, Map<String, String> data) {
         String message;
         if (!notification.getBody().isEmpty()) {
             message = "Received: \"" + notification.getBody() + "\".";
