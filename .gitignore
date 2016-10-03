@@ -38,3 +38,6 @@ proguard/
 *.ipr
 *.iws
 .idea/
+
+# Application
+google-services.json

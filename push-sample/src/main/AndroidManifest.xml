@@ -2,18 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.pivotal.android.push.sample" >
 
-    <!-- TODO - this sample manifest file needs a lot of clean up! -->
-
-    <!-- =============================================================================================== -->
-    <!-- You must add this permission, with your package name, to your manifest in order to receive push -->
-    <!-- notifications.  The permission name must be YOUR.PACKAGE.NAME.permission.C2D_MESSAGE -->
-    <permission
-        android:name="io.pivotal.android.push.sample.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-
-    <uses-permission android:name="io.pivotal.android.push.permission.C2D_MESSAGE" />
-    <!-- =============================================================================================== -->
-
     <!-- =============================================================================================== -->
     <!-- Use these two permissions if you want to use the geofence features of the Pivotal Push SDK      -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -34,27 +22,19 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
-        <!-- =============================================================================================== -->
-        <!-- You must add this receiver, with your package name as the category in the intent-filter, to     -->
-        <!-- your manifest in order to receive push notifications.  Do not change the package name in the    -->
-        <!-- receiver name itself.                                                                           -->
-        <receiver
-            android:name="io.pivotal.android.push.receiver.GcmBroadcastReceiver"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-
-                <category android:name="io.pivotal.android.push.sample" />
-            </intent-filter>
-        </receiver>
-        <!-- =============================================================================================== -->
+        <service
+            android:name=".service.GeofenceEventService"
+            android:exported="false" />
 
         <!-- =============================================================================================== -->
         <!-- You must add your push service to your manifest in order to receive notification updates -->
         <service
             android:name=".service.PushService"
-            android:exported="false" />
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
         <!-- =============================================================================================== -->
 
         <!-- =============================================================================================== -->
@@ -98,10 +78,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.pivotal.android.push.sample.activity.MainActivity" />
         </activity>
-<!--
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />-->
+            android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />

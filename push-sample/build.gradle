@@ -1,4 +1,28 @@
-dependencies {
-    compile pushSdk
-    compile 'com.android.support:appcompat-v7:23.1.1'
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
+
+    defaultConfig {
+        versionCode 6
+        versionName "1.5.0"
+        minSdkVersion 16
+        targetSdkVersion 24
+        applicationId "io.pivotal.android.push.sample"
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file(debugKeystorePath)
+        }
+    }
 }
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.google.android.gms:play-services-maps:9.4.0'
+    compile pushSdk
+}
+
+apply plugin: 'com.google.gms.google-services'

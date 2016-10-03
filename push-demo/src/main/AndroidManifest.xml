@@ -9,13 +9,13 @@
         android:name="io.pivotal.android.push.demo.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="io.pivotal.android.push.demo.permission.C2D_MESSAGE" />
+    <!--<uses-permission android:name="io.pivotal.android.push.demo.permission.C2D_MESSAGE" />-->
     <!-- =============================================================================================== -->
 
     <!-- =============================================================================================== -->
     <!-- Use these two permissions if you want to use the geofence features of the Pivotal Push SDK      -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
     <!-- =============================================================================================== -->
 
     <application
@@ -24,25 +24,12 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
-        <!-- =============================================================================================== -->
-        <!-- You must add this receiver, with your package name as the category in the intent-filter, to     -->
-        <!-- your manifest in order to receive push notifications.  Do not change the package name in the    -->
-        <!-- receiver name itself.                                                                           -->
-        <receiver
-            android:name="io.pivotal.android.push.receiver.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND"
-            android:exported="true">
+        <service
+            android:name="io.pivotal.android.push.demo.PushService">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-                <category android:name="io.pivotal.android.push.demo"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
-        </receiver>
-        <!-- =============================================================================================== -->
-
-        <!-- =============================================================================================== -->
-        <!-- You must add your push service to your manifest in order to receive notification updates        -->
-        <service android:name=".PushService" android:exported="false"/>
-        <!-- =============================================================================================== -->
+        </service>
 
         <activity
             android:name=".MainActivity"

@@ -21,7 +21,7 @@
     <string name="clear_registrations">Clear Registrations</string>
     <string name="clearing_gcm_device_registration">Clearing device registration from GCM</string>
     <string name="component_versions">\n\nPivotal CF Mobile Services\ncomponent versions:\n\n</string>
-    <string name="deleted_message_server">Deleted messages on server: %1$s</string>
+    <string name="deleted_message_server">Deleted messages on server</string>
     <string name="error_reading_file">ERROR reading %1$s file: %2$s</string>
     <string name="external_files_dir_error">ERROR: Was not able to get the externalFilesDir</string>
     <string name="gcm_message">"This message was sent to GCM at "</string>
@@ -61,7 +61,7 @@
     <string name="subscribe_to_tags_failed">"Failed to subscribe to tags: "</string>
     <string name="release_build_error">This feature does not work in release builds.</string>
     <string name="sdcard_error">This feature requires the SD-card to be mounted.</string>
-    <string name="send_error">Send error: %1$s</string>
+    <string name="send_error">Send error [%1$s]: %2$s</string>
     <string name="send_message_title">Send Message</string>
     <string name="starting_registration">Starting registration&#8230;</string>
     <string name="starting_unregistration">Starting unregistration&#8230;</string>
