@@ -5,16 +5,16 @@ package io.pivotal.android.push.sample.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class GcmMessageRequest {
+public class FcmDownstreamMessageRequest {
 
     @SerializedName("registration_ids")
     public String[] registrationIds;
 
-    @SerializedName("data")
-    public GcmMessageRequestData data;
+    @SerializedName("notification")
+    public FcmNotificationMessageRequest notification;
 
-    public GcmMessageRequest(String[] registrationIds, String message) {
+    public FcmDownstreamMessageRequest(String[] registrationIds, String message) {
         this.registrationIds = registrationIds;
-        this.data = new GcmMessageRequestData(message);
+        this.notification = new FcmNotificationMessageRequest(message);
     }
 }

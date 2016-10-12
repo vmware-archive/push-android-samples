@@ -39,9 +39,6 @@ import io.pivotal.android.push.sample.util.Preferences;
 
 public class MainActivity extends LoggingActivity {
 
-    private static final String GCM_SENDER_ID = "gcm_sender_id";
-    private static final String GCM_DEVICE_REGISTRATION_ID = "gcm_device_registration_id";
-    private static final String APP_VERSION = "app_version";
     private static final String VARIANT_UUID = "variant_uuid";
     private static final String VARIANT_SECRET = "variant_secret";
     private static final String DEVICE_ALIAS = "device_alias";
@@ -268,13 +265,7 @@ public class MainActivity extends LoggingActivity {
             public void onClickResult(int result) {
                 if (result != ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_CANCELLED) {
                     final SharedPreferences.Editor editor = getSharedPreferences(PushPreferencesProviderImpl.TAG_NAME, Context.MODE_PRIVATE).edit();
-                    if (result == ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_FROM_GCM || result == ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_FROM_BOTH) {
-                        addLogMessage(R.string.clearing_gcm_device_registration);
-                        editor.remove(GCM_SENDER_ID);
-                        editor.remove(GCM_DEVICE_REGISTRATION_ID);
-                        editor.remove(APP_VERSION);
-                    }
-                    if (result == ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_FROM_PCF_PUSH || result == ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_FROM_BOTH) {
+                    if (result == ClearRegistrationDialogFragment.CLEAR_REGISTRATIONS_FROM_PCF_PUSH) {
                         addLogMessage(R.string.clear_pcf_push_device_registration);
                         editor.remove(VARIANT_UUID);
                         editor.remove(VARIANT_SECRET);

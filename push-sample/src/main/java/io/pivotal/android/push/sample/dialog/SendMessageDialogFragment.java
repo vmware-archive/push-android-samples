@@ -13,7 +13,7 @@ import io.pivotal.android.push.sample.R;
 
 public class SendMessageDialogFragment extends DialogFragment {
 
-    public static final int VIA_GCM = 0;
+    public static final int VIA_FCM = 0;
     public static final int VIA_PCF_PUSH = 1;
     public static final int VIA_PCF_PUSH_TAGS = 2;
     public static final int HEARTBEAT = 3;

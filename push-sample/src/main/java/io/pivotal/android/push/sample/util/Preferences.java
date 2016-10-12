@@ -13,7 +13,7 @@ import java.util.Set;
 public class Preferences {
 
     public static final String DEVICE_ALIAS = "test_device_alias";
-    public static final String GCM_BROWSER_API_KEY = "test_gcm_browser_api_key";
+    public static final String FCM_BROWSER_API_KEY = "test_fcm_browser_api_key";
     public static final String PCF_PUSH_APP_UUID = "test_pcf_app_uuid";
     public static final String PCF_PUSH_API_KEY = "test_pcf_api_key";
     public static final String SUBSCRIBED_TAGS = "test_subscribed_tags";
@@ -22,7 +22,7 @@ public class Preferences {
 
     public static final String[] PREFERENCE_NAMES = {
             DEVICE_ALIAS,
-            GCM_BROWSER_API_KEY,
+            FCM_BROWSER_API_KEY,
             PCF_PUSH_APP_UUID,
             PCF_PUSH_API_KEY,
             ARE_GEOFENCES_ENABLED,
@@ -33,8 +33,8 @@ public class Preferences {
         return getSharedPreferences(context).getString(DEVICE_ALIAS, null);
     }
 
-    public static String getGcmBrowserApiKey(Context context) {
-        return getSharedPreferences(context).getString(GCM_BROWSER_API_KEY, null);
+    public static String getFcmBrowserApiKey(Context context) {
+        return getSharedPreferences(context).getString(FCM_BROWSER_API_KEY, null);
     }
 
     public static String getPCFPushAppUuid(Context context) {
