@@ -13,7 +13,6 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven {url 'https://maven.xtremelabs.com/artifactory/libs-release-local'}
     }
 
     ext {
