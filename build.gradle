@@ -35,7 +35,6 @@ subprojects {
         mavenCentral()
         maven { url "file://$sdkDir/extras/android/m2repository" }
         maven { url "file://$sdkDir/extras/google/m2repository" }
-        maven {url 'https://maven.xtremelabs.com/artifactory/libs-release-local'}
     }
 
     ext {
