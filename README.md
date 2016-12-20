@@ -38,6 +38,16 @@ currently supported by the library itself, you can also send push messages with 
 At this time, the sample application uses a dummy project on Firebase Console.  It is recommend that you create your
 own test Firebase Project by following the directions at https://firebase.google.com/docs/android/setup.
 
+You can build this project directly from the command line using Gradle or in Android Studio.
+
+IMPORTANT: Before building this project you need to build [Push Android SDK v1.7.0](https://github.com/cfmobile/push-android/tree/release_v1.7.0)
+by
+```
+./gradlew --info printVersion clean uploadArchives
+```
+
+It will build and publish .aar and .pom to your local maven repository.
+
 You can save your own project details by editing the values in the sample project's `push_default_preferences.xml` resource files.
 
 Watch the log output in the sample application's display to see what the Push SDK is doing in the background.  This
