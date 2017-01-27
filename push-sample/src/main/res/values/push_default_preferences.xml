@@ -22,5 +22,8 @@
     <!-- them by creating an application in the Pivotal CF Mobile Services Push Server admin console.                -->
     <string name="pref_default_pcf_app_uuid">3fb180cb-c9f0-4d67-b849-ec05d1be972d</string>
     <string name="pref_default_pcf_api_key">2b93f2f9-78b3-48a3-960e-8d4a3d1caf9f</string>
+    <string name="pref_default_pcf_platform_uuid">349b128a-e145-40e6-a7bd-8302e1f684c5</string>
+    <string name="pref_default_pcf_server_url">http://example.com</string>
+    <string name="pref_default_pcf_platform_secret">6c4fde9d-c769-41a2-acf7-22c0986eaed1</string>
 
 </resources>

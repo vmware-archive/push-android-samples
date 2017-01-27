@@ -40,6 +40,16 @@
         android:title="@string/pref_title_pcf_push_preferences">
 
         <EditTextPreference
+            android:key="test_pcf_server_url"
+            android:title="@string/pref_title_pcf_sever_url"
+            android:defaultValue="@string/pref_default_pcf_server_url"
+            android:persistent="true"
+            android:selectAllOnFocus="true"
+            android:inputType="text"
+            android:singleLine="true"
+            android:maxLines="1"/>
+
+        <EditTextPreference
             android:key="test_pcf_app_uuid"
             android:title="@string/pref_title_pcf_app_uuid"
             android:defaultValue="@string/pref_default_pcf_app_uuid"
@@ -53,6 +63,26 @@
             android:key="test_pcf_api_key"
             android:title="@string/pref_title_pcf_api_key"
             android:defaultValue="@string/pref_default_pcf_api_key"
+            android:persistent="true"
+            android:selectAllOnFocus="true"
+            android:inputType="text"
+            android:singleLine="true"
+            android:maxLines="1"/>
+
+        <EditTextPreference
+            android:key="test_pcf_platform_uuid"
+            android:title="@string/pref_title_pcf_platform_uuid"
+            android:defaultValue="@string/pref_default_pcf_platform_uuid"
+            android:persistent="true"
+            android:selectAllOnFocus="true"
+            android:inputType="text"
+            android:singleLine="true"
+            android:maxLines="1"/>
+
+        <EditTextPreference
+            android:key="test_pcf_platform_secret"
+            android:title="@string/pref_title_pcf_platform_secret"
+            android:defaultValue="@string/pref_default_pcf_platform_secret"
             android:persistent="true"
             android:selectAllOnFocus="true"
             android:inputType="text"

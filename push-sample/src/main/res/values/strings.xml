@@ -112,4 +112,7 @@
     <string name="fcm_message_request_accepted">FCM server accepted network request to send message. HTTP response status code is:</string>
     <string name="fcm_message_send_message_error">FCM server rejected network request to send message. HTTP response status code is:</string>
     <string name="fcm_parse_error">ERROR: got exception posting message to FCM server:</string>
+    <string name="pref_title_pcf_sever_url">Server URL</string>
+    <string name="pref_title_pcf_platform_uuid">Platform UUID</string>
+    <string name="pref_title_pcf_platform_secret">Platform Secret</string>
 </resources>

@@ -15,6 +15,9 @@ public class Preferences {
     public static final String DEVICE_ALIAS = "test_device_alias";
     public static final String FCM_BROWSER_API_KEY = "test_fcm_browser_api_key";
     public static final String PCF_PUSH_APP_UUID = "test_pcf_app_uuid";
+    public static final String PCF_PUSH_SERVER_URL = "test_pcf_server_url";
+    public static final String PCF_PUSH_PLATFORM_UUID = "test_pcf_platform_uuid";
+    public static final String PCF_PUSH_PLATFORM_SECRET = "test_pcf_platform_secret";
     public static final String PCF_PUSH_API_KEY = "test_pcf_api_key";
     public static final String SUBSCRIBED_TAGS = "test_subscribed_tags";
     public static final String ARE_GEOFENCES_ENABLED = "test_are_geofences_enabled";
@@ -24,6 +27,9 @@ public class Preferences {
             DEVICE_ALIAS,
             FCM_BROWSER_API_KEY,
             PCF_PUSH_APP_UUID,
+            PCF_PUSH_SERVER_URL,
+            PCF_PUSH_PLATFORM_UUID,
+            PCF_PUSH_PLATFORM_SECRET,
             PCF_PUSH_API_KEY,
             ARE_GEOFENCES_ENABLED,
             HEARTBEAT_COUNT
@@ -39,6 +45,18 @@ public class Preferences {
 
     public static String getPCFPushAppUuid(Context context) {
         return getSharedPreferences(context).getString(PCF_PUSH_APP_UUID, null);
+    }
+
+    public static String getPcfPushServerUrl(Context context) {
+        return getSharedPreferences(context).getString(PCF_PUSH_SERVER_URL, null);
+    }
+
+    public static String getPcfPushPlatformUuid(Context context) {
+        return getSharedPreferences(context).getString(PCF_PUSH_PLATFORM_UUID, null);
+    }
+
+    public static String getPcfPushPlatformSecret(Context context) {
+        return getSharedPreferences(context).getString(PCF_PUSH_PLATFORM_SECRET, null);
     }
 
     public static String getPCFPushApiKey(Context context) {
