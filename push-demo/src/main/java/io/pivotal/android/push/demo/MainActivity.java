@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -14,6 +15,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -21,6 +24,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import java.util.Set;
 
 import io.pivotal.android.push.Push;
+import io.pivotal.android.push.PushPlatformInfo;
 import io.pivotal.android.push.registration.RegistrationListener;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,13 +43,33 @@ public class MainActivity extends AppCompatActivity {
 
     private BroadcastReceiver messageBroadcastReceiver = null;
     private boolean isRegistering;
+    private PushPlatformInfo platformInfo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        requestPermissionForGeofences();
+        requestPushPlatformInformation();
+    }
+
+    private void requestPushPlatformInformation() {
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle(getString(R.string.title_push_platform_dlg));
+        final View view = alertDialog.getLayoutInflater().inflate(R.layout.platform_info, null);
+        alertDialog.setView(view);
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.OK), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final String serverUrl = ((EditText)view.findViewById(R.id.server_url)).getText().toString();
+                final String platformUuid = ((EditText)view.findViewById(R.id.platform_uuid)).getText().toString();
+                final String platformSecret = ((EditText)view.findViewById(R.id.platform_secret)).getText().toString();
+                platformInfo = new PushPlatformInfo(serverUrl, platformUuid, platformSecret);
+
+                requestPermissionForGeofences();
+            }
+        });
+        alertDialog.show();
     }
 
     private void requestPermissionForGeofences() {
@@ -83,7 +107,10 @@ public class MainActivity extends AppCompatActivity {
         printMessage("Geofences enabled: " + areGeofencesEnabled);
         printMessage("Registering for notifications...");
 
-        Push.getInstance(this).startRegistration(DEVICE_ALIAS, TAGS, areGeofencesEnabled, new RegistrationListener() {
+        Push push = Push.getInstance(this);
+
+        push.setPlatformInfo(platformInfo);
+        push.startRegistration(DEVICE_ALIAS, TAGS, areGeofencesEnabled, new RegistrationListener() {
 
             @Override
             public void onRegistrationComplete() {
