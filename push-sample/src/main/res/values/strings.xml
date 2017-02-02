@@ -105,7 +105,7 @@
     <string name="request_write_external_storage_permission">The Push Sample app needs to write to external storage in order to help you send debug push messages and view your currently monitored geofences.</string>
     <string name="pcf_sending_heartbeat_message">Requesting heartbeat message…</string>
     <string name="received_heartbeat_message">Received heartbeat. Count: %1$d.</string>
-    <string name="pref_title_fcm_push_preferences">FCM Server Key</string>
+    <string name="pref_title_fcm_push_preferences">FCM Server</string>
     <string name="pref_title_fcm_browser_api_key">FCM Server Key</string>
     <string name="fcm_message">This message was sent to FCM at</string>
     <string name="fcm_sending_message">Sending message via FCM&#8230;</string>
