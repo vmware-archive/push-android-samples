@@ -64,9 +64,13 @@ public class MainActivity extends AppCompatActivity {
                 final String serverUrl = ((EditText)view.findViewById(R.id.server_url)).getText().toString();
                 final String platformUuid = ((EditText)view.findViewById(R.id.platform_uuid)).getText().toString();
                 final String platformSecret = ((EditText)view.findViewById(R.id.platform_secret)).getText().toString();
-                platformInfo = new PushPlatformInfo(serverUrl, platformUuid, platformSecret);
-
-                requestPermissionForGeofences();
+                try {
+                    platformInfo = new PushPlatformInfo(serverUrl, platformUuid, platformSecret);
+                    requestPermissionForGeofences();
+                }
+                catch (IllegalArgumentException e) {
+                    printMessage("Invalid platform info.");
+                }
             }
         });
         alertDialog.show();
@@ -110,20 +114,27 @@ public class MainActivity extends AppCompatActivity {
         Push push = Push.getInstance(this);
 
         push.setPlatformInfo(platformInfo);
-        push.startRegistration(DEVICE_ALIAS, TAGS, areGeofencesEnabled, new RegistrationListener() {
 
-            @Override
-            public void onRegistrationComplete() {
-                printMessage("Registration successful.");
-                printMessage("FCM TokenId:" + FirebaseInstanceId.getInstance().getToken());
-                Log.i("push-demo", "FCM TokenId:" + FirebaseInstanceId.getInstance().getToken());
-            }
+        try{
+            push.startRegistration(DEVICE_ALIAS, TAGS, areGeofencesEnabled, new RegistrationListener() {
 
-            @Override
-            public void onRegistrationFailed(String reason) {
-                printMessage("Registration failed. Reason is '" + reason + "'.");
-            }
-        });
+                @Override
+                public void onRegistrationComplete() {
+                    printMessage("Registration successful.");
+                    printMessage("FCM TokenId:" + FirebaseInstanceId.getInstance().getToken());
+                    Log.i("push-demo", "FCM TokenId:" + FirebaseInstanceId.getInstance().getToken());
+                }
+
+                @Override
+                public void onRegistrationFailed(String reason) {
+                    printMessage("Registration failed. Reason is '" + reason + "'.");
+                }
+            });
+        }
+        catch (IllegalArgumentException e) {
+            printMessage("Registration failed. Reason is '" + e.getMessage() + "'.");
+        }
+
     }
 
     @Override
