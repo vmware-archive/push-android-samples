@@ -155,16 +155,26 @@ public class MainActivity extends LoggingActivity {
                 if (push.requestPermissions(this, ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE, dialog)) {
                     // Permission is already granted.  Otherwise, requestPermissions will display
                     // the provided dialog box which will call onRequestPermissionsResults below (API >= 23)
-                    startRegistrationWithGeofencesEnabled(true);
+                    registerWithGeofencesEnabled(true);
                 }
 
             } else {
-                startRegistrationWithGeofencesEnabled(false);
+                registerWithGeofencesEnabled(false);
             }
 
         } catch (Exception e) {
             queueLogMessage(e.getLocalizedMessage());
         }
+    }
+
+    private void registerWithGeofencesEnabled(final boolean areGeofencesEnabled) {
+        unregister(new UnregistrationComplete() {
+            @Override
+            public void onComplete() {
+                queueLogMessage("Unregistration complete. Continuing with Registration");
+                startRegistrationWithGeofencesEnabled(areGeofencesEnabled);
+            }
+        });
     }
 
     private void startRegistrationWithGeofencesEnabled(boolean areGeofencesEnabled) {
@@ -198,9 +208,9 @@ public class MainActivity extends LoggingActivity {
 
         if (requestCode == ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startRegistrationWithGeofencesEnabled(true);
+                registerWithGeofencesEnabled(true);
             } else {
-                startRegistrationWithGeofencesEnabled(false);
+                registerWithGeofencesEnabled(false);
             }
 
         } else if (requestCode == GEOFENCES_ACTIVITY_PERMISSION_REQUEST_CODE) {
@@ -245,22 +255,41 @@ public class MainActivity extends LoggingActivity {
         dialog.show(getSupportFragmentManager(), "SelectTagsDialogFragment");
     }
 
-    private void unregister() {
+    private void unregister(final UnregistrationComplete handler) {
         updateLogRowColour();
         addLogMessage(R.string.starting_unregistration);
 
-        push.startUnregistration(new UnregistrationListener() {
-            @Override
-            public void onUnregistrationComplete() {
-                queueLogMessage(R.string.unregistration_successful);
-            }
+        try {
+            push.startUnregistration(new UnregistrationListener() {
+                @Override
+                public void onUnregistrationComplete() {
+                    queueLogMessage(R.string.unregistration_successful);
 
-            @Override
-            public void onUnregistrationFailed(String reason) {
-                queueLogMessage(getString(R.string.unregistration_failed) + reason);
+                    if (handler != null) {
+                        handler.onComplete();
+                    }
+                }
+
+                @Override
+                public void onUnregistrationFailed(String reason) {
+                    queueLogMessage(getString(R.string.unregistration_failed) + reason);
+
+                    if (handler != null) {
+                        handler.onComplete();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            if (handler != null) {
+                handler.onComplete();
             }
-        });
+        }
     }
+
+    private void unregister() {
+        unregister(null);
+    }
+
 
     // This method cheats since it knows the names of the parameters saved by the SDK.
     private void clearRegistration() {
@@ -327,5 +356,9 @@ public class MainActivity extends LoggingActivity {
     private void startGeofencesActivity() {
         final Intent intent = new Intent(this, GeofenceActivity.class);
         startActivity(intent);
+    }
+
+    private interface UnregistrationComplete {
+        void onComplete();
     }
 }
