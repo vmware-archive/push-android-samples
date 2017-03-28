@@ -26,7 +26,7 @@ import android.widget.Toast;
 import java.util.Set;
 
 import io.pivotal.android.push.Push;
-import io.pivotal.android.push.PushPlatformInfo;
+import io.pivotal.android.push.PushServiceInfo;
 import io.pivotal.android.push.prefs.PushPreferencesProviderImpl;
 import io.pivotal.android.push.registration.RegistrationListener;
 import io.pivotal.android.push.registration.SubscribeToTagsListener;
@@ -183,10 +183,13 @@ public class MainActivity extends LoggingActivity {
 
         addLogMessage("subscribedTags:" + subscribedTags + " deviceAlias:" + deviceAlias + " areGeofencesEnabled:" + areGeofencesEnabled);
 
-        final PushPlatformInfo pushPlatformInfo = new PushPlatformInfo(Preferences.getPcfPushServerUrl(this),
-                Preferences.getPcfPushPlatformUuid(this),
-                Preferences.getPcfPushPlatformSecret(this));
-        push.setPlatformInfo(pushPlatformInfo);
+        final PushServiceInfo pushServiceInfo = PushServiceInfo.Builder()
+                .setServiceUrl(Preferences.getPcfPushServerUrl(this))
+                .setPlatformUuid(Preferences.getPcfPushPlatformUuid(this))
+                .setPlatformSecret(Preferences.getPcfPushPlatformSecret(this))
+                .build();
+
+        push.setPushServiceInfo(pushServiceInfo);
 
         push.startRegistration(deviceAlias, subscribedTags, areGeofencesEnabled, new RegistrationListener() {
             @Override

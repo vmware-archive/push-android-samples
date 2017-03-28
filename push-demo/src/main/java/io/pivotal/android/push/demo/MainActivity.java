@@ -24,7 +24,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import java.util.Set;
 
 import io.pivotal.android.push.Push;
-import io.pivotal.android.push.PushPlatformInfo;
+import io.pivotal.android.push.PushServiceInfo;
 import io.pivotal.android.push.registration.RegistrationListener;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     private BroadcastReceiver messageBroadcastReceiver = null;
     private boolean isRegistering;
-    private PushPlatformInfo platformInfo = null;
+    private PushServiceInfo pushServiceInfo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,11 @@ public class MainActivity extends AppCompatActivity {
                 final String platformUuid = ((EditText)view.findViewById(R.id.platform_uuid)).getText().toString();
                 final String platformSecret = ((EditText)view.findViewById(R.id.platform_secret)).getText().toString();
                 try {
-                    platformInfo = new PushPlatformInfo(serverUrl, platformUuid, platformSecret);
+                    pushServiceInfo = PushServiceInfo.Builder()
+                            .setServiceUrl(serverUrl)
+                            .setPlatformUuid(platformUuid)
+                            .setPlatformSecret(platformSecret)
+                            .build();
                     requestPermissionForGeofences();
                 }
                 catch (IllegalArgumentException e) {
@@ -113,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
         Push push = Push.getInstance(this);
 
-        push.setPlatformInfo(platformInfo);
+        push.setPushServiceInfo(pushServiceInfo);
 
         try{
             push.startRegistration(DEVICE_ALIAS, TAGS, areGeofencesEnabled, new RegistrationListener() {
