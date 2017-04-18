@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.3'
+        classpath 'com.android.tools.build:gradle:2.3.1'
         classpath 'com.google.gms:google-services:3.0.0'
     }
 }
@@ -20,7 +20,7 @@ subprojects {
     ext {
         // Pivotal CF Mobile Services dependencies
         pushSdkVersionName = System.getenv("PUSH_SDK_VERSION") ?: "2.0.+"
-        pushSdk = 'io.pivotal.android:push:' + pushSdkVersionName
+        pushSdk = 'io.pivotal.android:push-baidu:' + pushSdkVersionName
 
         println "Using Push SDK version: " + pushSdkVersionName
 

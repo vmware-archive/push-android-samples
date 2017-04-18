@@ -25,8 +25,8 @@ import android.widget.Toast;
 
 import java.util.Set;
 
-import io.pivotal.android.push.Push;
-import io.pivotal.android.push.PushServiceInfo;
+import io.pivotal.android.push.BaiduPush;
+import io.pivotal.android.push.PushPlatformInfo;
 import io.pivotal.android.push.prefs.PushPreferencesProviderImpl;
 import io.pivotal.android.push.registration.RegistrationListener;
 import io.pivotal.android.push.registration.SubscribeToTagsListener;
@@ -35,7 +35,7 @@ import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.dialog.ClearRegistrationDialogFragment;
 import io.pivotal.android.push.sample.dialog.SelectTagsDialogFragment;
 import io.pivotal.android.push.sample.helper.MessageSender;
-import io.pivotal.android.push.sample.service.PushService;
+//import io.pivotal.android.push.sample.service.PushService;
 import io.pivotal.android.push.sample.util.Preferences;
 
 public class MainActivity extends LoggingActivity {
@@ -50,7 +50,7 @@ public class MainActivity extends LoggingActivity {
     private static final int ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE = 9;
     private static final int GEOFENCES_ACTIVITY_PERMISSION_REQUEST_CODE = 13;
 
-    private Push push;
+    private BaiduPush push;
     private MessageSender sender;
 
     @Override
@@ -72,9 +72,9 @@ public class MainActivity extends LoggingActivity {
         setup();
 
         final Intent i = getIntent();
-        if (i.getAction().equals(PushService.NOTIFICATION_ACTION)) {
-            Push.getInstance(this).logOpenedNotification(i.getExtras());
-        }
+//        if (i.getAction().equals(PushService.NOTIFICATION_ACTION)) {
+//            BaiduPush.getInstance(this).logOpenedNotification(i.getExtras());
+//        }
     }
 
     protected Class<? extends PreferencesActivity> getPreferencesActivity() {
@@ -82,7 +82,7 @@ public class MainActivity extends LoggingActivity {
     }
 
     private void setup() {
-        push = Push.getInstance(this);
+        push = BaiduPush.getInstance(this);
         sender = new MessageSender(this, this);
     }
 
@@ -152,11 +152,11 @@ public class MainActivity extends LoggingActivity {
                         setPositiveButton(R.string.ok, null).
                         create();
 
-                if (push.requestPermissions(this, ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE, dialog)) {
-                    // Permission is already granted.  Otherwise, requestPermissions will display
-                    // the provided dialog box which will call onRequestPermissionsResults below (API >= 23)
-                    registerWithGeofencesEnabled(true);
-                }
+//                if (push.requestPermissions(this, ACCESS_FINE_LOCATION_PERMISSION_REQUEST_CODE, dialog)) {
+//                    // Permission is already granted.  Otherwise, requestPermissions will display
+//                    // the provided dialog box which will call onRequestPermissionsResults below (API >= 23)
+//                    registerWithGeofencesEnabled(true);
+//                }
 
             } else {
                 registerWithGeofencesEnabled(false);
@@ -183,13 +183,14 @@ public class MainActivity extends LoggingActivity {
 
         addLogMessage("subscribedTags:" + subscribedTags + " deviceAlias:" + deviceAlias + " areGeofencesEnabled:" + areGeofencesEnabled);
 
-        final PushServiceInfo pushServiceInfo = PushServiceInfo.Builder()
-                .setServiceUrl(Preferences.getPcfPushServerUrl(this))
-                .setPlatformUuid(Preferences.getPcfPushPlatformUuid(this))
-                .setPlatformSecret(Preferences.getPcfPushPlatformSecret(this))
-                .build();
+        final PushPlatformInfo pushPlatformInfo = new PushPlatformInfo(
+                Preferences.getPcfPushServerUrl(this),
+                Preferences.getPcfPushPlatformUuid(this),
+                Preferences.getPcfPushPlatformSecret(this)
+        );
 
-        push.setPushServiceInfo(pushServiceInfo);
+
+        push.setPlatformInfo(pushPlatformInfo);
 
         push.startRegistration(deviceAlias, subscribedTags, areGeofencesEnabled, new RegistrationListener() {
             @Override
@@ -237,17 +238,17 @@ public class MainActivity extends LoggingActivity {
 
                     Preferences.setSubscribedTags(MainActivity.this, selectedTags);
 
-                    push.subscribeToTags(selectedTags, new SubscribeToTagsListener() {
-                        @Override
-                        public void onSubscribeToTagsComplete() {
-                            queueLogMessage(R.string.subscribe_to_tags_successful);
-                        }
-
-                        @Override
-                        public void onSubscribeToTagsFailed(String reason) {
-                            queueLogMessage(getString(R.string.subscribe_to_tags_failed) + reason);
-                        }
-                    });
+//                    push.subscribeToTags(selectedTags, new SubscribeToTagsListener() {
+//                        @Override
+//                        public void onSubscribeToTagsComplete() {
+//                            queueLogMessage(R.string.subscribe_to_tags_successful);
+//                        }
+//
+//                        @Override
+//                        public void onSubscribeToTagsFailed(String reason) {
+//                            queueLogMessage(getString(R.string.subscribe_to_tags_failed) + reason);
+//                        }
+//                    });
                 }
             }
         };
@@ -263,25 +264,25 @@ public class MainActivity extends LoggingActivity {
         addLogMessage(R.string.starting_unregistration);
 
         try {
-            push.startUnregistration(new UnregistrationListener() {
-                @Override
-                public void onUnregistrationComplete() {
-                    queueLogMessage(R.string.unregistration_successful);
-
-                    if (handler != null) {
-                        handler.onComplete();
-                    }
-                }
-
-                @Override
-                public void onUnregistrationFailed(String reason) {
-                    queueLogMessage(getString(R.string.unregistration_failed) + reason);
-
-                    if (handler != null) {
-                        handler.onComplete();
-                    }
-                }
-            });
+//            push.startUnregistration(new UnregistrationListener() {
+//                @Override
+//                public void onUnregistrationComplete() {
+//                    queueLogMessage(R.string.unregistration_successful);
+//
+//                    if (handler != null) {
+//                        handler.onComplete();
+//                    }
+//                }
+//
+//                @Override
+//                public void onUnregistrationFailed(String reason) {
+//                    queueLogMessage(getString(R.string.unregistration_failed) + reason);
+//
+//                    if (handler != null) {
+//                        handler.onComplete();
+//                    }
+//                }
+//            });
         } catch (Exception e) {
             if (handler != null) {
                 handler.onComplete();
@@ -357,8 +358,8 @@ public class MainActivity extends LoggingActivity {
     }
 
     private void startGeofencesActivity() {
-        final Intent intent = new Intent(this, GeofenceActivity.class);
-        startActivity(intent);
+//        final Intent intent = new Intent(this, GeofenceActivity.class);
+//        startActivity(intent);
     }
 
     private interface UnregistrationComplete {
