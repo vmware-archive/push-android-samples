@@ -7,6 +7,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,20 +24,23 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.baidu.android.pushservice.PushConstants;
+import com.baidu.android.pushservice.PushManager;
+import com.baidu.android.pushservice.PushNotificationBuilder;
+
 import java.util.Set;
 
 import io.pivotal.android.push.BaiduPush;
 import io.pivotal.android.push.PushPlatformInfo;
 import io.pivotal.android.push.prefs.PushPreferencesProviderImpl;
 import io.pivotal.android.push.registration.RegistrationListener;
-import io.pivotal.android.push.registration.SubscribeToTagsListener;
-import io.pivotal.android.push.registration.UnregistrationListener;
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.dialog.ClearRegistrationDialogFragment;
 import io.pivotal.android.push.sample.dialog.SelectTagsDialogFragment;
 import io.pivotal.android.push.sample.helper.MessageSender;
-//import io.pivotal.android.push.sample.service.PushService;
 import io.pivotal.android.push.sample.util.Preferences;
+
+//import io.pivotal.android.push.sample.service.PushService;
 
 public class MainActivity extends LoggingActivity {
 
@@ -57,6 +61,8 @@ public class MainActivity extends LoggingActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        PushManager.startWork(this, PushConstants.LOGIN_TYPE_API_KEY, "FPVBCzfhuP2gSNgo5gXd8vC9");
+
         if (logItems.isEmpty()) {
             addLogMessage(R.string.registration_instructions);
         }
@@ -70,6 +76,7 @@ public class MainActivity extends LoggingActivity {
         updateLogRowColour();
         clearNotifications();
         setup();
+
 
         final Intent i = getIntent();
 //        if (i.getAction().equals(PushService.NOTIFICATION_ACTION)) {
@@ -262,8 +269,8 @@ public class MainActivity extends LoggingActivity {
     private void unregister(final UnregistrationComplete handler) {
         updateLogRowColour();
         addLogMessage(R.string.starting_unregistration);
-
-        try {
+        handler.onComplete();
+//        try {
 //            push.startUnregistration(new UnregistrationListener() {
 //                @Override
 //                public void onUnregistrationComplete() {
@@ -283,11 +290,11 @@ public class MainActivity extends LoggingActivity {
 //                    }
 //                }
 //            });
-        } catch (Exception e) {
-            if (handler != null) {
-                handler.onComplete();
-            }
-        }
+//        } catch (Exception e) {
+//            if (handler != null) {
+//                handler.onComplete();
+//            }
+//        }
     }
 
     private void unregister() {

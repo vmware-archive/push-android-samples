@@ -5,16 +5,34 @@
     <!-- =============================================================================================== -->
     <!-- Use these two permissions if you want to use the geofence features of the Pivotal Push SDK      -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- =============================================================================================== -->
 
     <!-- TODO - fine tune this list of permissions -->
     <!-- optional permission - used for debugging only -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
 
-    <uses-permission android:name="andrid.permission.INTERNET" />
+
+    <!-- Push service 运行需要的权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" /> <!-- Used by Google Maps -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- 富媒体需要声明的权限 -->
+    <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER"/>
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
+
+    <!-- 适配Android N系统必需的ContentProvider写权限声明，写权限包含应用包名-->
+    <uses-permission android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.io.pivotal.android.push.sample" />
+    <permission
+        android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.io.pivotal.android.push.sample"
+        android:protectionLevel="normal">
+    </permission>
 
     <application
         android:allowBackup="true"
@@ -22,32 +40,23 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
-        <service
-            android:name=".service.GeofenceEventService"
-            android:exported="false" />
 
         <!-- =============================================================================================== -->
         <!-- You must add your push service to your manifest in order to receive notification updates -->
-        <service
-            android:name=".service.PushService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
+
         <!-- =============================================================================================== -->
 
         <!-- =============================================================================================== -->
         <!-- You may add this receiver if you want to receive status updates when the SDK monitors geofences -->
         <!-- This receiver is the only way to receive error updates (as they happen) from the geofence       -->
         <!-- setup system in this SDK.                                                                       -->
-        <receiver
-            android:name=".receiver.GeofenceUpdateBroadcastReceiver"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="io.pivotal.android.push.geofence.UPDATE"/>
-            </intent-filter>
-        </receiver>
+        <!--<receiver-->
+            <!--android:name=".receiver.GeofenceUpdateBroadcastReceiver"-->
+            <!--android:exported="false" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="io.pivotal.android.push.geofence.UPDATE"/>-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
         <!-- =============================================================================================== -->
 
         <activity
@@ -70,20 +79,67 @@
                 android:value="io.pivotal.android.push.sample.activity.MainActivity" />
         </activity>
 
-        <activity
-            android:name=".activity.GeofenceActivity"
-            android:label="@string/title_activity_geofence"
-            android:configChanges="orientation|screenSize">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="io.pivotal.android.push.sample.activity.MainActivity" />
-        </activity>
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/google_maps_key" />
+            <!-- push service start -->
+            <!-- 用于接收系统消息以保证PushService正常运行 -->
+        <receiver android:name="com.baidu.android.pushservice.PushServiceReceiver"
+            android:process=":bdservice_v1" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="com.baidu.android.pushservice.action.notification.SHOW" />
+                <action android:name="com.baidu.android.pushservice.action.media.CLICK" />
+                <!-- 以下四项为可选的action声明，可大大提高service存活率和消息到达速度 -->
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+        <!-- Push服务接收客户端发送的各种请求-->
+        <!-- This can't be extended otherwise Baidu will return 10101: integration error -->
+        <receiver android:name="com.baidu.android.pushservice.RegistrationReceiver"
+            android:process=":bdservice_v1" >
+            <intent-filter>
+                <action android:name="com.baidu.android.pushservice.action.METHOD" />
+                <action android:name="com.baidu.android.pushservice.action.BIND_SYNC" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+        <service android:name="com.baidu.android.pushservice.PushService" android:exported="true"
+            android:process=":bdservice_v1" >
+            <intent-filter >
+                <action android:name="com.baidu.android.pushservice.action.PUSH_SERVICE" />
+            </intent-filter>
+        </service>
+
+        <!-- 4.4版本新增的CommandService声明，提升小米和魅族手机上的实际推送到达率 -->
+        <service android:name="com.baidu.android.pushservice.CommandService"
+            android:exported="true" />
+
+        <!-- 适配Android N系统必需的ContentProvider声明，写权限包含应用包名-->
+        <provider
+            android:name="com.baidu.android.pushservice.PushInfoProvider"
+            android:authorities="io.pivotal.baidupushdemo.bdpush"
+            android:writePermission="baidu.push.permission.WRITE_PUSHINFOPROVIDER.io.pivotal.android.push.sample"
+            android:protectionLevel = "signature"
+            android:exported="true" />
+
+            <!-- push结束 -->
+
+        <receiver android:name=".PushReceiver">
+            <intent-filter>
+                <!-- 接收push消息 -->
+                <action android:name="com.baidu.android.pushservice.action.MESSAGE" />
+                <!-- 接收bind、setTags等method的返回结果-->
+                <action android:name="com.baidu.android.pushservice.action.RECEIVE" />
+                <!-- 接收通知点击事件，和通知自定义内容 -->
+                <action android:name="com.baidu.android.pushservice.action.notification.CLICK" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
