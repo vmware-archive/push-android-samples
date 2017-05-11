@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="io.pivotal.android.push.sample" >
+
+  <!-- =============================================================================================== -->
+  <!-- Use these two permissions if you want to use the geofence features of the Pivotal Push SDK      -->
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+  <!-- =============================================================================================== -->
+
+  <!-- TODO - fine tune this list of permissions -->
+  <!-- optional permission - used for debugging only -->
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
+
+  <uses-permission android:name="andrid.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" /> <!-- Used by Google Maps -->
+
+  <application
+    android:allowBackup="true"
+    android:icon="@drawable/ic_pivotal_logo"
+    android:label="@string/app_name"
+    android:theme="@style/AppTheme" >
+
+    <service
+      android:name=".service.GeofenceEventService"
+      android:exported="false" />
+
+    <!-- =============================================================================================== -->
+    <!-- You must add your push service to your manifest in order to receive notification updates -->
+    <service
+      android:name=".service.PushService"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+      </intent-filter>
+    </service>
+    <!-- =============================================================================================== -->
+
+    <!-- =============================================================================================== -->
+    <!-- You may add this receiver if you want to receive status updates when the SDK monitors geofences -->
+    <!-- This receiver is the only way to receive error updates (as they happen) from the geofence       -->
+    <!-- setup system in this SDK.                                                                       -->
+    <receiver
+      android:name=".receiver.GeofenceUpdateBroadcastReceiver"
+      android:exported="false" >
+      <intent-filter>
+        <action android:name="io.pivotal.android.push.geofence.UPDATE"/>
+      </intent-filter>
+    </receiver>
+    <!-- =============================================================================================== -->
+
+    <activity
+      android:name=".activity.GeofenceActivity"
+      android:label="@string/title_activity_geofence"
+      android:configChanges="orientation|screenSize">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value="io.pivotal.android.push.sample.activity.MainActivity" />
+    </activity>
+
+    <meta-data
+      android:name="com.google.android.gms.version"
+      android:value="@integer/google_play_services_version" />
+    <meta-data
+      android:name="com.google.android.maps.v2.API_KEY"
+      android:value="@string/google_maps_key" />
+  </application>
+
+</manifest>

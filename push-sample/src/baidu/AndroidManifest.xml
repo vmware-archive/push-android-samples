@@ -1,0 +1,36 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="io.pivotal.android.push.sample">
+
+
+  <!-- 适配Android N系统必需的ContentProvider写权限声明，写权限包含应用包名-->
+  <!--Adapt to Android N System Required ContentProvider write permission statement, write permissions include application package name-->
+  <uses-permission android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.io.pivotal.android.push.sample" />
+  <permission
+    android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.io.pivotal.android.push.sample"
+    android:protectionLevel="normal">
+  </permission>
+
+  <application>
+    <receiver android:name="io.pivotal.android.push.sample.receiver.PushReceiver">
+      <intent-filter>
+        <!-- 接收push消息 -->
+        <action android:name="com.baidu.android.pushservice.action.MESSAGE" />
+        <!-- 接收bind、setTags等method的返回结果-->
+        <action android:name="com.baidu.android.pushservice.action.RECEIVE" />
+        <!-- 接收通知点击事件，和通知自定义内容 -->
+        <action android:name="com.baidu.android.pushservice.action.notification.CLICK" />
+      </intent-filter>
+    </receiver>
+
+    <!-- 适配Android N系统必需的ContentProvider声明，写权限包含应用包名-->
+    <provider
+      android:name="com.baidu.android.pushservice.PushInfoProvider"
+      android:authorities="io.pivotal.baidupushdemo.bdpush"
+      android:writePermission="baidu.push.permission.WRITE_PUSHINFOPROVIDER.io.pivotal.android.push.sample"
+      android:protectionLevel = "signature"
+      android:exported="true" />
+
+    <!-- push结束 -->
+  </application>
+
+</manifest>

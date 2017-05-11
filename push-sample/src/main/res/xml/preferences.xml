@@ -22,17 +22,33 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/pref_title_fcm_push_preferences">
+      android:title="@string/pref_title_fcm_push_preferences">
 
         <EditTextPreference
-            android:key="test_fcm_browser_api_key"
-            android:title="@string/pref_title_fcm_browser_api_key"
-            android:defaultValue="@string/pref_default_fcm_server_key"
-            android:persistent="true"
-            android:selectAllOnFocus="true"
-            android:inputType="text"
-            android:singleLine="true"
-            android:maxLines="1"/>
+          android:key="test_fcm_browser_api_key"
+          android:title="@string/pref_title_fcm_browser_api_key"
+          android:defaultValue="@string/pref_default_fcm_server_key"
+          android:persistent="true"
+          android:selectAllOnFocus="true"
+          android:inputType="text"
+          android:singleLine="true"
+          android:maxLines="1"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+      android:title="@string/pref_title_baidu_push_preferences">
+
+        <EditTextPreference
+          android:key="test_baidu_api_key"
+          android:title="@string/pref_title_baidu_api_key"
+          android:defaultValue="@string/pref_default_baidu_api_key"
+          android:persistent="true"
+          android:selectAllOnFocus="true"
+          android:inputType="text"
+          android:singleLine="true"
+          android:maxLines="1"
+          android:visibility="gone"/>
 
     </PreferenceCategory>
 

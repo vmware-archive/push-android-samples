@@ -14,6 +14,7 @@ public class Preferences {
 
     public static final String DEVICE_ALIAS = "test_device_alias";
     public static final String FCM_BROWSER_API_KEY = "test_fcm_browser_api_key";
+    public static final String BAIDU_API_KEY = "test_baidu_api_key";
     public static final String PCF_PUSH_APP_UUID = "test_pcf_app_uuid";
     public static final String PCF_PUSH_SERVER_URL = "test_pcf_server_url";
     public static final String PCF_PUSH_PLATFORM_UUID = "test_pcf_platform_uuid";
@@ -26,6 +27,7 @@ public class Preferences {
     public static final String[] PREFERENCE_NAMES = {
             DEVICE_ALIAS,
             FCM_BROWSER_API_KEY,
+            BAIDU_API_KEY,
             PCF_PUSH_APP_UUID,
             PCF_PUSH_SERVER_URL,
             PCF_PUSH_PLATFORM_UUID,
@@ -57,6 +59,10 @@ public class Preferences {
 
     public static String getPcfPushPlatformSecret(Context context) {
         return getSharedPreferences(context).getString(PCF_PUSH_PLATFORM_SECRET, null);
+    }
+
+    public static String getBaiduApiKey(Context context) {
+        return getSharedPreferences(context).getString(BAIDU_API_KEY, null);
     }
 
     public static String getPCFPushApiKey(Context context) {

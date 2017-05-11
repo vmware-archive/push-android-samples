@@ -17,12 +17,24 @@ android {
             storeFile file(debugKeystorePath)
         }
     }
+
+    productFlavors {
+        fcm {
+
+        }
+
+        baidu {
+
+        }
+    }
 }
 
 dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.google.android.gms:play-services-maps:9.4.0'
-    compile pushSdk
+
+    fcmCompile pushFcmSdk
+    baiduCompile pushBaiduSdk
 }
 
 apply plugin: 'com.google.gms.google-services'

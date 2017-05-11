@@ -17,6 +17,8 @@
     <!-- also have to provide it in your "variant" in the Pivotal CF Mobile Services Push Server admin console.      -->
     <string name="pref_default_fcm_server_key">AIzaSyAPmTRn9cmlR7NNHMW6S37iSvDDPV4xawk</string>
 
+    <string name="pref_default_baidu_api_key">NOT_A_REAL_API_KEY</string>
+
     <!-- These two parameters are only required if you want to send push messages via the Pivotal CF Mobile Services -->
     <!-- server in the sample app.  They are not used during the registration process.  You should be able to obtain -->
     <!-- them by creating an application in the Pivotal CF Mobile Services Push Server admin console.                -->
