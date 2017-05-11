@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import io.pivotal.android.push.prefs.Pivotal.SslCertValidationMode;
 import java.util.Set;
 
 import io.pivotal.android.push.Push;
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
                             .setServiceUrl(serverUrl)
                             .setPlatformUuid(platformUuid)
                             .setPlatformSecret(platformSecret)
+                            .setSSLCertValidationMode(SslCertValidationMode.TRUST_ALL)
                             .build();
                     requestPermissionForGeofences();
                 }
