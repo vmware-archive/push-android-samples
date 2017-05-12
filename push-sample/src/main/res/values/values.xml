@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Push Sample</string>
-
     <string name="action_about">About</string>
     <string name="action_clear_events">Clear Unsent Events</string>
     <string name="action_clear_registration">Clear Registration</string>

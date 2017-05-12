@@ -7,7 +7,7 @@ Push SDK Usage
 For more information please visit the [docs site](http://docs.pivotal.io/mobile/push/android/)
 
 IMPORTANT: Please note that you should be able to build both of the apps below without any modification HOWEVER
-you will need to change the `pivotal.properties` file to point the SDK to your own PCF Push Notification
+you will need to change the push server url and secrets in the preferences screen to point to your own PCF Push Notification
 Server install.  The default build is usually set up to point to a test server and it will not likely
 work under your conditions.
 

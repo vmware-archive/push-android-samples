@@ -15,17 +15,17 @@
 
     <!-- This parameter is only required if you want to push messages via FCM in the sample app, though you may      -->
     <!-- also have to provide it in your "variant" in the Pivotal CF Mobile Services Push Server admin console.      -->
-    <string name="pref_default_fcm_server_key">AIzaSyAPmTRn9cmlR7NNHMW6S37iSvDDPV4xawk</string>
+    <string name="pref_default_fcm_server_key"></string>
 
-    <string name="pref_default_baidu_api_key">NOT_A_REAL_API_KEY</string>
+    <string name="pref_default_baidu_api_key"></string>
 
     <!-- These two parameters are only required if you want to send push messages via the Pivotal CF Mobile Services -->
     <!-- server in the sample app.  They are not used during the registration process.  You should be able to obtain -->
     <!-- them by creating an application in the Pivotal CF Mobile Services Push Server admin console.                -->
-    <string name="pref_default_pcf_app_uuid">3fb180cb-c9f0-4d67-b849-ec05d1be972d</string>
-    <string name="pref_default_pcf_api_key">2b93f2f9-78b3-48a3-960e-8d4a3d1caf9f</string>
-    <string name="pref_default_pcf_platform_uuid">349b128a-e145-40e6-a7bd-8302e1f684c5</string>
-    <string name="pref_default_pcf_server_url">http://example.com</string>
-    <string name="pref_default_pcf_platform_secret">6c4fde9d-c769-41a2-acf7-22c0986eaed1</string>
+    <string name="pref_default_pcf_app_uuid"></string>
+    <string name="pref_default_pcf_api_key"></string>
+    <string name="pref_default_pcf_platform_uuid"></string>
+    <string name="pref_default_pcf_platform_secret"></string>
+    <string name="pref_default_pcf_server_url"></string>
 
 </resources>

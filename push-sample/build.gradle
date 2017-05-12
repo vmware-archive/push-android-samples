@@ -20,11 +20,11 @@ android {
 
     productFlavors {
         fcm {
-
+            applicationId "io.pivotal.android.push.sample"
         }
 
         baidu {
-
+            applicationId "io.pivotal.android.push.sample.baidu"
         }
     }
 }
@@ -37,4 +37,7 @@ dependencies {
     baiduCompile pushBaiduSdk
 }
 
-apply plugin: 'com.google.gms.google-services'
+if (!getGradle().getStartParameter().getTaskRequests()
+        .toString().contains("Baidu")){
+    apply plugin: 'com.google.gms.google-services'
+}
