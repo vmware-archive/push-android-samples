@@ -19,11 +19,7 @@ subprojects {
     }
 
     ext {
-        // Pivotal CF Mobile Services dependencies
         pushSdkVersionName = System.getenv("PUSH_SDK_VERSION") ?: "2.0.+"
-        pushFcmSdk = 'io.pivotal.android:push-fcm:' + pushSdkVersionName
-        pushBaiduSdk = 'io.pivotal.android:push-baidu:' + pushSdkVersionName
-
         println "Using Push SDK version: " + pushSdkVersionName
 
         debugKeystorePath = System.getenv("PUSH_DEBUG_SIGNING_KEY") ?: new File(System.getProperty('user.home'), '.android').absolutePath + "/PCFPush.android.debug.keystore"
