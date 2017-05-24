@@ -23,17 +23,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import io.pivotal.android.push.prefs.Pivotal.SslCertValidationMode;
 import java.util.Set;
 
 import io.pivotal.android.push.Push;
 import io.pivotal.android.push.PushServiceInfo;
+import io.pivotal.android.push.prefs.Pivotal.SslCertValidationMode;
 import io.pivotal.android.push.registration.RegistrationListener;
 import io.pivotal.android.push.registration.SubscribeToTagsListener;
 import io.pivotal.android.push.registration.UnregistrationListener;
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.dialog.ClearRegistrationDialogFragment;
 import io.pivotal.android.push.sample.dialog.SelectTagsDialogFragment;
+import io.pivotal.android.push.sample.helper.FCMMessageSender;
 import io.pivotal.android.push.sample.helper.MessageSender;
 import io.pivotal.android.push.sample.service.PushService;
 import io.pivotal.android.push.sample.util.Preferences;
@@ -51,7 +52,7 @@ public class MainActivity extends LoggingActivity {
     private static final int GEOFENCES_ACTIVITY_PERMISSION_REQUEST_CODE = 13;
 
     private Push push;
-    private MessageSender sender;
+    private FCMMessageSender sender;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,7 +84,7 @@ public class MainActivity extends LoggingActivity {
 
     private void setup() {
         push = Push.getInstance(this);
-        sender = new MessageSender(this, this);
+        sender = new FCMMessageSender(this, this);
     }
 
     private void clearNotifications() {
@@ -344,7 +345,7 @@ public class MainActivity extends LoggingActivity {
 
                 } else {
 
-                    ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, GEOFENCES_ACTIVITY_PERMISSION_REQUEST_CODE);
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, GEOFENCES_ACTIVITY_PERMISSION_REQUEST_CODE);
                 }
             } else {
                 Toast.makeText(this, R.string.maps_requires_location_permission, Toast.LENGTH_LONG).show();

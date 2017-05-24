@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
 import android.widget.Toast;
 
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 
 import java.io.BufferedOutputStream;
@@ -23,12 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import io.pivotal.android.push.prefs.Pivotal;
 import io.pivotal.android.push.sample.R;
 import io.pivotal.android.push.sample.adapter.MessageLogger;
 import io.pivotal.android.push.sample.dialog.SelectTagsDialogFragment;
 import io.pivotal.android.push.sample.dialog.SendMessageDialogFragment;
-import io.pivotal.android.push.sample.model.FcmDownstreamMessageRequest;
 import io.pivotal.android.push.sample.model.PCFPushMessageCustom;
 import io.pivotal.android.push.sample.model.PCFPushMessageRequest;
 import io.pivotal.android.push.sample.util.Preferences;
@@ -36,16 +33,15 @@ import io.pivotal.android.push.util.DebugUtil;
 
 public class MessageSender {
 
-    private static final String POST = "POST";
-    private static final String CONTENT_TYPE = "Content-Type";
-    private static final String APPLICATION_JSON = "application/json";
-    private static final String AUTHORIZATION = "Authorization";
-    private static final String DEVICE_UUID = "device_uuid";
-    private static final String FCM_SEND_MESSAGE_URL = "https://fcm.googleapis.com/fcm/send";
-    private static final String PCF_PUSH_SEND_MESSAGE_URL = "v1/push";
+    protected static final String POST = "POST";
+    protected static final String CONTENT_TYPE = "Content-Type";
+    protected static final String APPLICATION_JSON = "application/json";
+    protected static final String AUTHORIZATION = "Authorization";
+    protected static final String DEVICE_UUID = "device_uuid";
+    protected static final String PCF_PUSH_SEND_MESSAGE_URL = "v1/push";
 
-    private final FragmentActivity context;
-    private final MessageLogger logger;
+    protected final FragmentActivity context;
+    protected final MessageLogger logger;
 
     public MessageSender(final FragmentActivity context, final MessageLogger logger) {
         this.logger = logger;
@@ -66,10 +62,7 @@ public class MessageSender {
 
             @Override
             public void onClickResult(int result) {
-                switch(result) {
-                    case SendMessageDialogFragment.VIA_FCM:
-                        sendMessageViaFcm();
-                        break;
+                switch (result) {
                     case SendMessageDialogFragment.VIA_PCF_PUSH:
                         sendMessageViaPCFPush(null);
                         break;
@@ -87,7 +80,7 @@ public class MessageSender {
         dialog.show(context.getSupportFragmentManager(), "SendMessageDialogFragment");
     }
 
-    private void sendMessageViaPCFPushAndTags() {
+    protected void sendMessageViaPCFPushAndTags() {
         final SelectTagsDialogFragment.Listener listener = new SelectTagsDialogFragment.Listener() {
 
             @Override
@@ -104,7 +97,7 @@ public class MessageSender {
         dialog.show(context.getSupportFragmentManager(), "SelectTagsDialogFragment");
     }
 
-    private void sendMessageViaPCFPush(Set<String> tags) {
+    protected void sendMessageViaPCFPush(Set<String> tags) {
         logger.updateLogRowColour();
         final String data = getPCFPushMessageRequestString(tags);
         if (data == null) {
@@ -131,8 +124,7 @@ public class MessageSender {
         postMessageToPCF(data);
     }
 
-    private void postMessageToPCF(final String data) {
-
+    protected void postMessageToPCF(final String data) {
         AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -165,7 +157,8 @@ public class MessageSender {
                     if (outputStream != null) {
                         try {
                             outputStream.close();
-                        } catch (IOException e) {}
+                        } catch (IOException e) {
+                        }
                     }
                 }
                 return null;
@@ -182,7 +175,7 @@ public class MessageSender {
         return "Basic  " + Base64.encodeToString(stringToEncode.getBytes(), Base64.NO_WRAP);
     }
 
-    private void writeConnectionOutput(String requestBodyData, OutputStream outputStream) throws IOException {
+    protected void writeConnectionOutput(String requestBodyData, OutputStream outputStream) throws IOException {
         final byte[] bytes = requestBodyData.getBytes();
         for (byte b : bytes) {
             outputStream.write(b);
@@ -217,62 +210,12 @@ public class MessageSender {
         final Map<String, String> androidExtras = new HashMap<>();
         androidExtras.put("pcf.push.heartbeat.sentAt", Long.toString(System.currentTimeMillis()));
         final PCFPushMessageCustom custom = new PCFPushMessageCustom(androidExtras);
-        final PCFPushMessageRequest messageRequest = new PCFPushMessageRequest(messageBody, null, new String[] {"pcf.push.heartbeat"}, custom);
+        final PCFPushMessageRequest messageRequest = new PCFPushMessageRequest(messageBody, null, new String[]{"pcf.push.heartbeat"}, custom);
         final Gson gson = new Gson();
         return gson.toJson(messageRequest);
     }
 
-    private void sendMessageViaFcm() {
-        logger.updateLogRowColour();
-        final String data = getFcmMessageRequestString();
-        if (data == null) {
-            logger.addLogMessage(R.string.need_to_be_registered_error);
-            return;
-        }
-        logger.addLogMessage(R.string.fcm_sending_message);
-        logger.addLogMessage(context.getString(R.string.message_body_data) + data);
-
-        final AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                OutputStream outputStream = null;
-                try {
-                    final URL url = new URL(FCM_SEND_MESSAGE_URL);
-                    final HttpURLConnection urlConnection = getUrlConnection(url);
-                    urlConnection.addRequestProperty(AUTHORIZATION, "key=" + Preferences.getFcmBrowserApiKey(context));
-                    urlConnection.setDoOutput(true);
-                    urlConnection.connect();
-
-                    outputStream = new BufferedOutputStream(urlConnection.getOutputStream());
-                    writeConnectionOutput(data, outputStream);
-
-                    final int statusCode = urlConnection.getResponseCode();
-                    if (statusCode >= 200 && statusCode < 300) {
-                        logger.queueLogMessage(context.getString(R.string.fcm_message_request_accepted) + statusCode);
-                    } else {
-                        logger.queueLogMessage(context.getString(R.string.fcm_message_send_message_error) + statusCode);
-                    }
-
-                    urlConnection.disconnect();
-
-                } catch (Exception e) {
-                    logger.queueLogMessage(context.getString(R.string.fcm_parse_error) + e.getLocalizedMessage());
-                }
-
-                finally {
-                    if (outputStream != null) {
-                        try {
-                            outputStream.close();
-                        } catch (IOException e) {}
-                    }
-                }
-                return null;
-            }
-        };
-        asyncTask.execute((Void) null);
-    }
-
-    private HttpURLConnection getUrlConnection(URL url) throws IOException {
+    protected HttpURLConnection getUrlConnection(URL url) throws IOException {
         final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setDoInput(true);
         urlConnection.setRequestMethod(POST);
@@ -280,18 +223,6 @@ public class MessageSender {
         urlConnection.setReadTimeout(60000);
         urlConnection.addRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
         return urlConnection;
-    }
-
-    private String getFcmMessageRequestString() {
-        final String regId = FirebaseInstanceId.getInstance().getToken();
-        if (regId == null) {
-            return null;
-        }
-        final String[] devices = new String[]{regId};
-        final String message = context.getString(R.string.fcm_message) + logger.getLogTimestamp();
-        final FcmDownstreamMessageRequest messageRequest = new FcmDownstreamMessageRequest(devices, message);
-        final Gson gson = new Gson();
-        return gson.toJson(messageRequest);
     }
 
     private String readIdFromFile(String idType) {
